@@ -1,3 +1,5 @@
+use super::CPU;
+
 trait RegisterAccess {
     fn get_register_8(&self, reg: Reg8b) -> u8;
     fn set_register_8(&mut self, reg: Reg8b, value: u8);
