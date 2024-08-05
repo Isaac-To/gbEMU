@@ -1,3 +1,6 @@
+mod exec;
+mod reg;
+
 pub struct CPU {
     // Registers
     registers: [u8; 12],
