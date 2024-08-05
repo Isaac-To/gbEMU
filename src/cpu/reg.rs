@@ -1,13 +1,13 @@
-use super::CPU;
+use crate::cpu::CPU;
 
-trait RegisterAccess {
+pub trait RegisterAccess {
     fn get_register_8(&self, reg: Reg8b) -> u8;
     fn set_register_8(&mut self, reg: Reg8b, value: u8);
     fn get_register_16(&self, reg: Reg16b) -> u16;
     fn set_register_16(&mut self, reg: Reg16b, value: u16);
 }
 
-enum Reg8b {
+pub enum Reg8b {
     A,
     B,
     C,
@@ -41,13 +41,13 @@ impl Reg8b {
     }
 }
 
-enum Reg16b {
+pub enum Reg16b {
     AF,
     BC,
     DE,
-    HL,
-    SP,
-    PC,
+    HL, // Typically used for memory addressing
+    SP, // Stack Pointer
+    PC, // Program Counter
 }
 
 impl Reg16b {
@@ -88,7 +88,7 @@ impl RegisterAccess for CPU {
 // BIT 7: Zero Flag
 
 #[derive(Debug, PartialEq)]
-enum Flag {
+pub enum Flag {
     Carry = 4,
     HalfCarry = 5,
     Subtract = 6,
@@ -96,7 +96,7 @@ enum Flag {
     None = 0,
 }
 
-trait FlagRegister {
+pub trait FlagRegister {
     fn get_flag(&self) -> Flag;
     fn set_flag(&mut self, flag: Flag);
 }

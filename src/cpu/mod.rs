@@ -1,7 +1,7 @@
 mod exec;
 mod reg;
 
-pub struct CPU {
+pub(crate) struct CPU {
     // Registers
     // PC and SP are 8,9 and 10,11 respectively
     registers: [u8; 12],
