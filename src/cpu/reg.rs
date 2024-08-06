@@ -1,11 +1,6 @@
-use crate::cpu::CPU;
+use std::collections::{HashMap, HashSet};
 
-pub trait RegisterAccess {
-    fn get_register_8(&self, reg: Reg8b) -> u8;
-    fn set_register_8(&mut self, reg: Reg8b, value: u8);
-    fn get_register_16(&self, reg: Reg16b) -> u16;
-    fn set_register_16(&mut self, reg: Reg16b, value: u16);
-}
+use crate::cpu::CPU;
 
 pub enum Reg8b {
     A,
@@ -63,6 +58,31 @@ impl Reg16b {
     }
 }
 
+// Flag Register
+// STORED IN F REGISTER
+// BIT 0-3: Unused
+// BIT 4: Carry Flag
+// BIT 5: Half Carry Flag
+// BIT 6: Subtract Flag
+// BIT 7: Zero Flag
+
+#[derive(Debug, PartialEq)]
+pub enum Flag {
+    Zero = 7, // Z
+    Subtract = 6, // N
+    HalfCarry = 5, // H
+    Carry = 4, // C
+}
+
+pub trait RegisterAccess {
+    fn get_register_8(&self, reg: Reg8b) -> u8;
+    fn set_register_8(&mut self, reg: Reg8b, value: u8);
+    fn get_register_16(&self, reg: Reg16b) -> u16;
+    fn set_register_16(&mut self, reg: Reg16b, value: u16);
+    fn get_flags(&self) -> (bool, bool, bool, bool);
+    fn set_flags(&mut self, zero: bool, subtract: bool, half_carry: bool, carry: bool);
+}
+
 impl RegisterAccess for CPU {
     fn get_register_8(&self, reg: Reg8b) -> u8 {
         self.registers[reg as usize]
@@ -77,48 +97,29 @@ impl RegisterAccess for CPU {
         self.registers[reg.value().0 as usize] = (value >> 8) as u8;
         self.registers[reg.value().1 as usize] = value as u8;
     }
-}
-
-// Flag Register
-// STORED IN F REGISTER
-// BIT 0-3: Unused
-// BIT 4: Carry Flag
-// BIT 5: Half Carry Flag
-// BIT 6: Subtract Flag
-// BIT 7: Zero Flag
-
-#[derive(Debug, PartialEq)]
-pub enum Flag {
-    Carry = 4,
-    HalfCarry = 5,
-    Subtract = 6,
-    Zero = 7,
-    None = 0,
-}
-
-pub trait FlagRegister {
-    fn get_flag(&self) -> Flag;
-    fn set_flag(&mut self, flag: Flag);
-}
-
-impl FlagRegister for CPU {
-    fn get_flag(&self) -> Flag {
-        let content = self.get_register_8(Reg8b::F);
-        {
-            if content >> Flag::Carry as u8 == 1 {
-                return Flag::Carry;
-            } else if content >> Flag::HalfCarry as u8 == 1 {
-                return Flag::HalfCarry;
-            } else if content >> Flag::Subtract as u8 == 1 {
-                return Flag::Subtract;
-            } else if content >> Flag::Zero as u8 == 1 {
-                return Flag::Zero;
-            } else {
-                return Flag::None;
-            }
-        }
+    fn get_flags(&self)-> (bool, bool, bool, bool) {
+        let f = self.get_register_8(Reg8b::F);
+        (
+            f & (1 << Flag::Zero as u8) != 0,
+            f & (1 << Flag::Subtract as u8) != 0,
+            f & (1 << Flag::HalfCarry as u8) != 0,
+            f & (1 << Flag::Carry as u8) != 0,
+        )
     }
-    fn set_flag(&mut self, flag: Flag) {
-        self.set_register_8(Reg8b::F, 1 << flag as u8);
+    fn set_flags(&mut self, zero: bool, subtract: bool, half_carry: bool, carry: bool) {
+        let mut f = 0;
+        if zero {
+            f |= 1 << Flag::Zero as u8;
+        }
+        if subtract {
+            f |= 1 << Flag::Subtract as u8;
+        }
+        if half_carry {
+            f |= 1 << Flag::HalfCarry as u8;
+        }
+        if carry {
+            f |= 1 << Flag::Carry as u8;
+        }
+        self.set_register_8(Reg8b::F, f);
     }
 }
