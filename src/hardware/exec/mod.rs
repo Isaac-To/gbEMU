@@ -15,198 +15,301 @@ impl Execution for CPU {
 }
 
 impl CPU {
-    // Returns (cycles, bytes)
-
-    // Add with carry helper function
-    fn adc_8_a(&mut self, a: u8, b: u8) {
+    // ADC - Add with Carry to A
+    fn _adc(&mut self, val: u8) {
         let flags = self.reg_get_flags();
-        let (result, carry_0) = a.overflowing_add(b);
-        let (result, carry_1) = result.overflowing_add(flags.3 as u8);
-        self.reg_set_8(Reg8b::A, result);
-        self.reg_set_flags(
-            result == 0,
-            false,
-            (a & 0x0F) + (b & 0x0F) + (flags.3 as u8) > 0x0F,
-            carry_0 | carry_1,
-        );
+        let a = self.reg_get_8(&Reg8b::A);
+        let (result, carry) = a.overflowing_add(val);
+        let (result, carry2) = result.overflowing_add(flags.3);
+        let half_carry = (a & 0xF) + (val & 0xF) + flags.3 > 0xF;
+        self.reg_set_8(&Reg8b::A, result);
+        self.reg_set_flags((
+            if result == 0 { 1 } else { 0 },
+            0,
+            half_carry as u8,
+            if carry || carry2 { 1 } else { 0 },
+        ));
     }
-    // ADC A, r8
-    pub fn adc_a_r8(&mut self, reg: Reg8b) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        let b = self.reg_get_8(reg);
-        self.adc_8_a(a, b);
-        (1, 1)
+    pub fn adc_r8(&mut self, reg: &Reg8b) {
+        self._adc(self.reg_get_8(reg));
     }
-    // ADC A, (HL)
-    pub fn adc_a_hl(&mut self) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        let b = self.mem_read_8(self.reg_get_16(Reg16b::HL));
-        self.adc_8_a(a, b);
-        (2, 1)
-
+    pub fn adc_hl(&mut self) {
+        self._adc(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    // ADC A, n8
-    pub fn adc_a_n8(&mut self, n: u8) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        self.adc_8_a(a, n);
-        (2, 2)
+    pub fn adc_n8(&mut self, val: u8) {
+        self._adc(val);
     }
-    // Add_8 helper function
-    fn add_8_a(&mut self, a: u8, b: u8) {
-        let (result, carry) = a.overflowing_add(b);
-        self.reg_set_8(Reg8b::A, result);
-        let flags = (
-            result == 0,
-            false,
-            (a & 0x0F) + (b & 0x0F) > 0x0F,
-            carry,
-        );
-        self.reg_set_flags(flags.0, flags.1, flags.2, flags.3);
+    // ADD A - Add to A
+    fn _add(&mut self, val: u8) {
+        let a = self.reg_get_8(&Reg8b::A);
+        let (result, carry) = a.overflowing_add(val);
+        let half_carry = (a & 0xF) + (val & 0xF) > 0xF;
+        self.reg_set_8(&Reg8b::A, result);
+        self.reg_set_flags((
+            if result == 0 { 1 } else { 0 },
+            0,
+            half_carry as u8,
+            if carry { 1 } else { 0 },
+        ));
     }
-    // ADD A, r8
-    pub fn add_a_r8(&mut self, reg: Reg8b) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        let b = self.reg_get_8(reg);
-        self.add_8_a(a, b);
-        (1, 1)
+    pub fn add_r8(&mut self, reg: &Reg8b) {
+        self._add(self.reg_get_8(reg));
     }
-    // ADD A, (HL)
-    pub fn add_a_hl(&mut self) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        let b = self.mem_read_8(self.reg_get_16(Reg16b::HL));
-        self.add_8_a(a, b);
-        (2, 1)
+    pub fn add_hl(&mut self) {
+        self._add(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    // ADD A, n8
-    pub fn add_a_n8(&mut self, n: u8) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        self.add_8_a(a, n);
-        (2, 2)
+    pub fn add_n8(&mut self, val: u8) {
+        self._add(val);
     }
-    // Add_16 helper function
-    fn add_16_hl(&mut self, a: u16, b: u16) {
-        let (result, carry) = a.overflowing_add(b);
-        self.reg_set_16(Reg16b::HL, result);
-        let mut flags = self.reg_get_flags();
-        flags = (
-            flags.0,
-            false,
-            (a & 0x0FFF) + (b & 0x0FFF) > 0x0FFF,
-            carry,
-        );
-        self.reg_set_flags(flags.0, flags.1, flags.2, flags.3);
+    // ADD HL - Add to HL
+    fn _add_hl(&mut self, val: u16) {
+        let hl = self.reg_get_16(&Reg16b::HL);
+        let (result, carry) = hl.overflowing_add(val);
+        let half_carry = (hl & 0xFFF) + (val & 0xFFF) > 0xFFF;
+        self.reg_set_16(&Reg16b::HL, result);
+        self.reg_set_flags((
+            self.reg_get_flags().0,
+            0,
+            half_carry as u8,
+            if carry { 1 } else { 0 },
+        ));
     }
-    // ADD HL, r16
-    pub fn add_hl_r16(&mut self, reg: Reg16b) -> (u8, u8) {
-        let a = self.reg_get_16(Reg16b::HL);
-        let b = self.reg_get_16(reg);
-        self.add_16_hl(a, b);
-        (2, 1)
+    pub fn add_hl_r16(&mut self, reg: &Reg16b) {
+        self._add_hl(self.reg_get_16(reg));
     }
-    // ADD HL, SP
-    pub fn add_hl_sp(&mut self) -> (u8, u8) {
-        let a = self.reg_get_16(Reg16b::HL);
-        let b = self.reg_get_16(Reg16b::SP);
-        self.add_16_hl(a, b);
-        (2, 1)
+    pub fn add_hl_sp(&mut self) {
+        self._add_hl(self.reg_get_16(&Reg16b::SP));
     }
-    // ADD SP, e8
-    pub fn add_sp_e8(&mut self, n: i8) -> (u8, u8) {
-        let a = self.reg_get_16(Reg16b::SP);
-        let b = n as u16;
-        let (result, carry) = a.overflowing_add(b);
-        self.reg_set_16(Reg16b::SP, result);
-        let flags = (
-            false,
-            false,
-            (a & 0x0F) + (b & 0x0F) > 0x0F,
-            carry,
-        );
-        self.reg_set_flags(flags.0, flags.1, flags.2, flags.3);
-        (4, 2)
+    // ADD SP
+    pub fn add_sp_e8(&mut self, val: i8) {
+        let sp = self.reg_get_16(&Reg16b::SP);
+        let (result, carry) = sp.overflowing_add(val as u16);
+        let half_carry = (sp & 0xF) + (val as u16 & 0xF) > 0xF;
+        self.reg_set_16(&Reg16b::SP, result);
+        self.reg_set_flags((0, 0, half_carry as u8, if carry { 1 } else { 0 }));
     }
-    // AND_8_A helper function
-    fn and_8_a(&mut self, a: u8, b: u8) {
-        let result = a & b;
-        self.reg_set_8(Reg8b::A, result);
-        let flags = (
-            result == 0,
-            false,
-            true,
-            false,
-        );
-        self.reg_set_flags(flags.0, flags.1, flags.2, flags.3);
+    // AND A - Bitwise AND to A
+    fn _and(&mut self, val: u8) {
+        let a = self.reg_get_8(&Reg8b::A);
+        let result = a & val;
+        self.reg_set_8(&Reg8b::A, result);
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 1, 0));
     }
-    // AND A, r8
-    pub fn and_a_r8(&mut self, reg: Reg8b) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        let b = self.reg_get_8(reg);
-        self.and_8_a(a, b);
-        (1, 1)
+    pub fn and_r8(&mut self, reg: &Reg8b) {
+        self._and(self.reg_get_8(reg));
     }
-    // AND A, (HL)
-    pub fn and_a_hl(&mut self) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        let b = self.mem_read_8(self.reg_get_16(Reg16b::HL));
-        self.and_8_a(a, b);
-        (2, 1)
+    pub fn and_hl(&mut self) {
+        self._and(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    // AND A, n8
-    pub fn and_a_n8(&mut self, n: u8) -> (u8, u8) {
-        let a = self.reg_get_8(Reg8b::A);
-        self.and_8_a(a, n);
-        (2, 2)
+    pub fn and_n8(&mut self, val: u8) {
+        self._and(val);
     }
-    // BIT_8_u3 helper function
-    fn bit_8_u3(&mut self, bit: u8, value: u16) {
-        let result = value & (1 << bit) != 0;
-        let mut flags = self.reg_get_flags();
-        flags = (
-            !result,
-            false,
-            true,
+    // BIT u3 - Test Bit
+    pub fn bit_u3_val(&mut self, bit: u8, val: u8) {
+        let result = val & (1 << bit);
+        self.reg_set_flags((
+            if result == 0 { 1 } else { 0 },
+            0,
+            1,
             self.reg_get_flags().3,
-        );
-        self.reg_set_flags(flags.0, flags.1, flags.2, flags.3);
+        ));
     }
-    // BIT u3, r8
-    pub fn bit_u3_r8(&mut self, bit: u8, reg: Reg8b) -> (u8, u8) {
-        let value = self.reg_get_8(reg) as u16;
-        self.bit_8_u3(bit, value);
-        (2, 2)
+    pub fn bit_u3_r8(&mut self, bit: u8, reg: &Reg8b) {
+        self.bit_u3_val(bit, self.reg_get_8(reg));
     }
-    // BIT u3, (HL)
-    pub fn bit_u3_hl(&mut self, bit: u8) -> (u8, u8) {
-        let value = self.mem_read_8(self.reg_get_16(Reg16b::HL)) as u16;
-        self.bit_8_u3(bit, value);
-        (3, 2)
+    pub fn bit_u3_hl(&mut self, bit: u8) {
+        self.bit_u3_val(bit, self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    // CALL n16
-    pub fn call_n16(&mut self, n: u16) -> (u8, u8) {
-        let next_instruction_addr = self.reg_get_16(Reg16b::PC);
-        self.mem_stack_push_16(next_instruction_addr);
-        self.reg_set_16(Reg16b::PC, n);
-        (6, 3)
+    // CALL - Place address of next instruction on stack and jump to address
+    pub fn call_n16(&mut self, addr: u16) {
+        let pc = self.reg_get_16(&Reg16b::PC);
+        self.mem_stack_push_16(pc);
+        self.reg_set_16(&Reg16b::PC, addr);
     }
-    // CALL cc, n16
-    pub fn call_cc_n16(&mut self, cc: u8, n: u16) -> (u8, u8) {
-        if self.reg_get_flags().0 == (cc != 0) {
-            self.call_n16(n);
-            (6, 3)
-        } else {
-            (3, 3)
+    pub fn call_cc_n16(&mut self, addr: u16, flag: u8) {
+        if self.reg_get_flags().3 == flag {
+            self.call_n16(addr);
         }
     }
-    // CCF
-    pub fn ccf(&mut self) -> (u8, u8) {
-        let mut flags = self.reg_get_flags();
-        flags = (
-            flags.0,
-            false,
-            false,
-            !flags.3,
-        );
-        self.reg_set_flags(flags.0, flags.1, flags.2, flags.3);
-        (1, 1)
+    // CCF - Complement Carry Flag
+    pub fn ccf(&mut self) {
+        let flags = self.reg_get_flags();
+        self.reg_set_flags((flags.0, 0, 0, if flags.3 == 0 { 1 } else { 0 }));
     }
+    // CP A - Compare A
+    fn _cp(&mut self, val: u8) {
+        let a = self.reg_get_8(&Reg8b::A);
+        let result = a.wrapping_sub(val);
+        let half_carry = (a & 0xF) < (val & 0xF);
+        self.reg_set_flags((
+            if result == 0 { 1 } else { 0 },
+            1,
+            half_carry as u8,
+            if a < val { 1 } else { 0 },
+        ));
+    }
+    pub fn cp_r8(&mut self, reg: &Reg8b) {
+        self._cp(self.reg_get_8(reg));
+    }
+    pub fn cp_hl(&mut self) {
+        self._cp(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    }
+    pub fn cp_n8(&mut self, val: u8) {
+        self._cp(val);
+    }
+    // CPL - Complement A
+    pub fn cpl(&mut self) {
+        let a = self.reg_get_8(&Reg8b::A);
+        self.reg_set_8(&Reg8b::A, !a);
+        self.reg_set_flags((self.reg_get_flags().0, 1, 1, self.reg_get_flags().3));
+    }
+    // DAA - Decimal Adjust A
+    pub fn daa(&mut self) {
+        let mut flags = self.reg_get_flags();
+        let mut a = self.reg_get_8(&Reg8b::A);
+        let mut carry = 0;
+        let mut offset = 0;
+        // 6 is derived from the fact 16 - 10 = 6
+        let lower_nibble = a & 0xF;
+        let upper_nibble = a >> 4;
+        if flags.2 == 1 || (!(flags.1 == 1) && lower_nibble > 9) {
+            offset |= 0x6;
+        }
+        if flags.3 == 1 || (!(flags.1 == 1) && upper_nibble > 9) {
+            offset |= 0x60;
+            carry = 1;
+        }
+        if flags.1 == 0 {
+            a = a.wrapping_add(offset);
+        } else {
+            a = a.wrapping_sub(offset);
+        }
+        flags = (
+            if a == 0 { 1 } else { 0 },
+            flags.1,
+            0,
+            carry,
+        );
+        self.reg_set_8(&Reg8b::A, a);
+        self.reg_set_flags(flags);
+    }
+    // DEC - Decrement
+    pub fn dec_r8(&mut self, reg: &Reg8b) {
+        let val = self.reg_get_8(reg).wrapping_sub(1);
+        let half_carry = (val & 0xF) == 0xF;
+        self.reg_set_8(reg, val);
+        self.reg_set_flags((
+            if val == 0 { 1 } else { 0 },
+            1,
+            half_carry as u8,
+            self.reg_get_flags().3,
+        ));
+    }
+    pub fn dec_hl(&mut self) {
+        let val = self.mem_read_8(self.reg_get_16(&Reg16b::HL)).wrapping_sub(1);
+        let half_carry = (val & 0xF) == 0xF;
+        self.mem_write_8(self.reg_get_16(&Reg16b::HL), val);
+        self.reg_set_flags((
+            if val == 0 { 1 } else { 0 },
+            1,
+            half_carry as u8,
+            self.reg_get_flags().3,
+        ));
+    }
+    pub fn dec_r16(&mut self, reg: &Reg16b) {
+        let val = self.reg_get_16(reg).wrapping_sub(1);
+        self.reg_set_16(reg, val);
+    }
+    pub fn dec_sp(&mut self) {
+        let val = self.reg_get_16(&Reg16b::SP).wrapping_sub(1);
+        self.reg_set_16(&Reg16b::SP, val);
+    }
+    // DI
+    pub fn di(&mut self) {
+        self._ime = 0;
+    }
+    // EI
+    pub fn ei(&mut self) {
+        self._interrupt_iminent = 1;
+    }
+    // HALT
+    pub fn halt(&mut self) {
+        if self._ime == 1 {
+            // IME set
+            self._low_power = 1;
+        } else {
+            // IME not set
+            if self._interrupt_iminent == 1 {
+                // Interrupt iminent
+                self._low_power = 1;
+            } else {
+                // No interrupt iminent
+                self._low_power = 0;
+                // Odd but this is how it is in documentation
+                self.mem_read_16(self.reg_get_16(&Reg16b::PC) + 1);
+                self.mem_read_16(self.reg_get_16(&Reg16b::PC) + 1);
+            }
+        }
+    }
+    // INC
+    pub fn inc_r8(&mut self, reg: &Reg8b) {
+        let val = self.reg_get_8(reg).wrapping_add(1);
+        let half_carry = (val & 0xF) == 0;
+        self.reg_set_8(reg, val);
+        self.reg_set_flags((
+            if val == 0 { 1 } else { 0 },
+            0,
+            half_carry as u8,
+            self.reg_get_flags().3,
+        ));
+    }
+    pub fn inc_hl(&mut self) {
+        let val = self.mem_read_8(self.reg_get_16(&Reg16b::HL)).wrapping_add(1);
+        let half_carry = (val & 0xF) == 0;
+        self.mem_write_8(self.reg_get_16(&Reg16b::HL), val);
+        self.reg_set_flags((
+            if val == 0 { 1 } else { 0 },
+            0,
+            half_carry as u8,
+            self.reg_get_flags().3,
+        ));
+    }
+    pub fn inc_r16(&mut self, reg: &Reg16b) {
+        let val = self.reg_get_16(reg).wrapping_add(1);
+        self.reg_set_16(reg, val);
+    }
+    pub fn inc_sp(&mut self) {
+        let val = self.reg_get_16(&Reg16b::SP).wrapping_add(1);
+        self.reg_set_16(&Reg16b::SP, val);
+    }
+    // JP
+    // JR
+    // LD
+    // LDH
+    // NOP
+    // OR A
+    // POP
+    // PUSH
+    // RES u3
+    // RET
+    // RETI
+    // RL
+    // RLA
+    // RLC
+    // RLCA
+    // RR
+    // RRA
+    // RRC
+    // RRCA
+    // RST
+    // SBC
+    // SCF
+    // SET u3
+    // SLA
+    // SRA
+    // SRL
+    // STOP
+    // SUB
+    // SWAP
+    // XOR
 }

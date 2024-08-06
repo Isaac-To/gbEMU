@@ -12,6 +12,11 @@ pub(crate) struct CPU {
 
     // Video memory
     vram: [u8; 8192],
+
+    // Internal Flags
+    _ime: u8,
+    _interrupt_iminent: u8,
+    _low_power: u8
 }
 
 impl CPU {
@@ -20,6 +25,9 @@ impl CPU {
             registers: [0; 12],
             memory: [0; 8192],
             vram: [0; 8192],
+            _ime: 0,
+            _interrupt_iminent: 0,
+            _low_power: 0
         }
     }
 }

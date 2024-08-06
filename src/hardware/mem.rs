@@ -33,25 +33,25 @@ impl MemoryAccess for CPU {
         self.mem_write_8(addr + 1, high);
     }
     fn mem_stack_push_8 (&mut self, value: u8) {
-        let sp = self.reg_get_16(Reg16b::SP);
+        let sp = self.reg_get_16(&Reg16b::SP);
         self.mem_write_8(sp, value);
-        self.reg_set_16(Reg16b::SP, sp - 1);
+        self.reg_set_16(&Reg16b::SP, sp - 1);
     }
     fn mem_stack_push_16(&mut self, value: u16) {
-        let sp = self.reg_get_16(Reg16b::SP);
+        let sp = self.reg_get_16(&Reg16b::SP);
         self.mem_write_16(sp, value);
-        self.reg_set_16(Reg16b::SP, sp - 2);
+        self.reg_set_16(&Reg16b::SP, sp - 2);
     }
     fn mem_stack_pop_8(&mut self) -> u8 {
-        let sp = self.reg_get_16(Reg16b::SP);
+        let sp = self.reg_get_16(&Reg16b::SP);
         let value = self.mem_read_8(sp + 1);
-        self.reg_set_16(Reg16b::SP, sp + 1);
+        self.reg_set_16(&Reg16b::SP, sp + 1);
         value
     }
     fn mem_stack_pop_16(&mut self) -> u16 {
-        let sp = self.reg_get_16(Reg16b::SP);
+        let sp = self.reg_get_16(&Reg16b::SP);
         let value = self.mem_read_16(sp + 1);
-        self.reg_set_16(Reg16b::SP, sp + 2);
+        self.reg_set_16(&Reg16b::SP, sp + 2);
         value
     }
 }
