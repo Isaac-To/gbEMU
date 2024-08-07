@@ -14,9 +14,16 @@ impl Execution for CPU {
     fn exec(&mut self) {}
 }
 
+/*
+Functions are named as follows:
+_  - prepending the function name means it is a helper function
+a  - prepending an argument means it is accessing a memory address
+*/
+
+
 impl CPU {
     // ADC - Add with Carry to A
-    fn _adc(&mut self, val: u8) {
+    fn _adc_a(&mut self, val: u8) {
         let flags = self.reg_get_flags();
         let a = self.reg_get_8(&Reg8b::A);
         let (result, carry) = a.overflowing_add(val);
@@ -30,17 +37,17 @@ impl CPU {
             if carry || carry2 { 1 } else { 0 },
         ));
     }
-    pub fn adc_r8(&mut self, reg: &Reg8b) {
-        self._adc(self.reg_get_8(reg));
+    pub fn adc_a_r8(&mut self, reg: &Reg8b) {
+        self._adc_a(self.reg_get_8(reg));
     }
-    pub fn adc_hl(&mut self) {
-        self._adc(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    pub fn adc_a_ahl(&mut self) {
+        self._adc_a(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    pub fn adc_n8(&mut self, val: u8) {
-        self._adc(val);
+    pub fn adc_a_n8(&mut self, val: u8) {
+        self._adc_a(val);
     }
     // ADD A - Add to A
-    fn _add(&mut self, val: u8) {
+    fn _add_a(&mut self, val: u8) {
         let a = self.reg_get_8(&Reg8b::A);
         let (result, carry) = a.overflowing_add(val);
         let half_carry = (a & 0xF) + (val & 0xF) > 0xF;
@@ -52,14 +59,14 @@ impl CPU {
             if carry { 1 } else { 0 },
         ));
     }
-    pub fn add_r8(&mut self, reg: &Reg8b) {
-        self._add(self.reg_get_8(reg));
+    pub fn add_a_r8(&mut self, reg: &Reg8b) {
+        self._add_a(self.reg_get_8(reg));
     }
-    pub fn add_hl(&mut self) {
-        self._add(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    pub fn add_a_ahl(&mut self) {
+        self._add_a(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    pub fn add_n8(&mut self, val: u8) {
-        self._add(val);
+    pub fn add_a_n8(&mut self, val: u8) {
+        self._add_a(val);
     }
     // ADD HL - Add to HL
     fn _add_hl(&mut self, val: u16) {
@@ -81,31 +88,45 @@ impl CPU {
         self._add_hl(self.reg_get_16(&Reg16b::SP));
     }
     // ADD SP
-    pub fn add_sp_e8(&mut self, val: i8) {
+    pub fn add_sp_e8(&mut self) {
         let sp = self.reg_get_16(&Reg16b::SP);
-        let (result, carry) = sp.overflowing_add(val as u16);
-        let half_carry = (sp & 0xF) + (val as u16 & 0xF) > 0xF;
+        let e8 = self.mem_pc_read_8() as i8 as i16;
+        let result = sp.wrapping_add_signed(e8);
+        let flags = (
+            0,
+            0,
+            if (sp & 0xF).wrapping_add_signed(e8 & 0xF) > 0xF {
+                1
+            } else {
+                0
+            },
+            if (sp & 0xFF).wrapping_add_signed(e8 & 0xFF) > 0xFF {
+                1
+            } else {
+                0
+            },
+        );
         self.reg_set_16(&Reg16b::SP, result);
-        self.reg_set_flags((0, 0, half_carry as u8, if carry { 1 } else { 0 }));
+        self.reg_set_flags(flags);
     }
     // AND A - Bitwise AND to A
-    fn _and(&mut self, val: u8) {
+    fn _and_a(&mut self, val: u8) {
         let a = self.reg_get_8(&Reg8b::A);
         let result = a & val;
         self.reg_set_8(&Reg8b::A, result);
         self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 1, 0));
     }
-    pub fn and_r8(&mut self, reg: &Reg8b) {
-        self._and(self.reg_get_8(reg));
+    pub fn and_a_r8(&mut self, reg: &Reg8b) {
+        self._and_a(self.reg_get_8(reg));
     }
-    pub fn and_hl(&mut self) {
-        self._and(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    pub fn and_a_ahl(&mut self) {
+        self._and_a(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    pub fn and_n8(&mut self, val: u8) {
-        self._and(val);
+    pub fn and_a_n8(&mut self, val: u8) {
+        self._and_a(val);
     }
     // BIT u3 - Test Bit
-    pub fn bit_u3_val(&mut self, bit: u8, val: u8) {
+    pub fn _bit_u3(&mut self, bit: u8, val: u8) {
         let result = val & (1 << bit);
         self.reg_set_flags((
             if result == 0 { 1 } else { 0 },
@@ -115,10 +136,10 @@ impl CPU {
         ));
     }
     pub fn bit_u3_r8(&mut self, bit: u8, reg: &Reg8b) {
-        self.bit_u3_val(bit, self.reg_get_8(reg));
+        self._bit_u3(bit, self.reg_get_8(reg));
     }
-    pub fn bit_u3_hl(&mut self, bit: u8) {
-        self.bit_u3_val(bit, self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    pub fn bit_u3_ahl(&mut self, bit: u8) {
+        self._bit_u3(bit, self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
     // CALL - Place address of next instruction on stack and jump to address
     pub fn call_n16(&mut self, addr: u16) {
@@ -137,7 +158,7 @@ impl CPU {
         self.reg_set_flags((flags.0, 0, 0, if flags.3 == 0 { 1 } else { 0 }));
     }
     // CP A - Compare A
-    fn _cp(&mut self, val: u8) {
+    fn _cp_a(&mut self, val: u8) {
         let a = self.reg_get_8(&Reg8b::A);
         let result = a.wrapping_sub(val);
         let half_carry = (a & 0xF) < (val & 0xF);
@@ -148,14 +169,14 @@ impl CPU {
             if a < val { 1 } else { 0 },
         ));
     }
-    pub fn cp_r8(&mut self, reg: &Reg8b) {
-        self._cp(self.reg_get_8(reg));
+    pub fn cp_a_r8(&mut self, reg: &Reg8b) {
+        self._cp_a(self.reg_get_8(reg));
     }
-    pub fn cp_hl(&mut self) {
-        self._cp(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    pub fn cp_a_ahl(&mut self) {
+        self._cp_a(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    pub fn cp_n8(&mut self, val: u8) {
-        self._cp(val);
+    pub fn cp_a_n8(&mut self, val: u8) {
+        self._cp_a(val);
     }
     // CPL - Complement A
     pub fn cpl(&mut self) {
@@ -184,12 +205,7 @@ impl CPU {
         } else {
             a = a.wrapping_sub(offset);
         }
-        flags = (
-            if a == 0 { 1 } else { 0 },
-            flags.1,
-            0,
-            carry,
-        );
+        flags = (if a == 0 { 1 } else { 0 }, flags.1, 0, carry);
         self.reg_set_8(&Reg8b::A, a);
         self.reg_set_flags(flags);
     }
@@ -205,8 +221,10 @@ impl CPU {
             self.reg_get_flags().3,
         ));
     }
-    pub fn dec_hl(&mut self) {
-        let val = self.mem_read_8(self.reg_get_16(&Reg16b::HL)).wrapping_sub(1);
+    pub fn dec_ahl(&mut self) {
+        let val = self
+            .mem_read_8(self.reg_get_16(&Reg16b::HL))
+            .wrapping_sub(1);
         let half_carry = (val & 0xF) == 0xF;
         self.mem_write_8(self.reg_get_16(&Reg16b::HL), val);
         self.reg_set_flags((
@@ -224,15 +242,15 @@ impl CPU {
         let val = self.reg_get_16(&Reg16b::SP).wrapping_sub(1);
         self.reg_set_16(&Reg16b::SP, val);
     }
-    // DI
+    // DI - Disable Interrupts
     pub fn di(&mut self) {
         self._ime = 0;
     }
-    // EI
+    // EI - Enable Interrupts
     pub fn ei(&mut self) {
         self._interrupt_iminent = 1;
     }
-    // HALT
+    // HALT - Halt CPU
     pub fn halt(&mut self) {
         if self._ime == 1 {
             // IME set
@@ -251,7 +269,7 @@ impl CPU {
             }
         }
     }
-    // INC
+    // INC - Increment
     pub fn inc_r8(&mut self, reg: &Reg8b) {
         let val = self.reg_get_8(reg).wrapping_add(1);
         let half_carry = (val & 0xF) == 0;
@@ -263,8 +281,10 @@ impl CPU {
             self.reg_get_flags().3,
         ));
     }
-    pub fn inc_hl(&mut self) {
-        let val = self.mem_read_8(self.reg_get_16(&Reg16b::HL)).wrapping_add(1);
+    pub fn inc_ahl(&mut self) {
+        let val = self
+            .mem_read_8(self.reg_get_16(&Reg16b::HL))
+            .wrapping_add(1);
         let half_carry = (val & 0xF) == 0;
         self.mem_write_8(self.reg_get_16(&Reg16b::HL), val);
         self.reg_set_flags((
@@ -282,9 +302,54 @@ impl CPU {
         let val = self.reg_get_16(&Reg16b::SP).wrapping_add(1);
         self.reg_set_16(&Reg16b::SP, val);
     }
-    // JP
-    // JR
-    // LD
+    // JP - Jump
+    pub fn jp_n16(&mut self, addr: u16) {
+        self.reg_set_16(&Reg16b::PC, addr);
+    }
+    pub fn jp_cc_n16(&mut self, addr: u16, flag: u8) {
+        if self.reg_get_flags().3 == flag {
+            self.jp_n16(addr);
+        }
+    }
+    pub fn jp_hl(&mut self) {
+        self.reg_set_16(&Reg16b::PC, self.reg_get_16(&Reg16b::HL));
+    }
+    // JR - Jump Relative
+    pub fn jr_n16(&mut self) {
+        let s8 = self.mem_pc_read_8() as i8 as i16;
+        let pc = self.reg_get_16(&Reg16b::PC);
+        self.jp_n16(pc.wrapping_add_signed(s8));
+    }
+    pub fn jr_cc_n16(&mut self, flag: u8) {
+        if self.reg_get_flags().3 == flag {
+            self.jr_n16();
+        }
+    }
+    // LD - Load
+    pub fn ld_r8_r8(&mut self, dest: &Reg8b, src: &Reg8b) {
+        self.reg_set_8(dest, self.reg_get_8(src));
+    }
+    pub fn ld_r8_n8(&mut self, dest: &Reg8b, val: u8) {
+        self.reg_set_8(dest, val);
+    }
+    pub fn ld_r16_n16(&mut self, dest: &Reg16b, val: u16) {
+        self.reg_set_16(dest, val);
+    }
+    pub fn ld_ahl_r8(&mut self, reg: &Reg8b) {
+        self.mem_write_8(self.reg_get_16(&Reg16b::HL), self.reg_get_8(reg));
+    }
+    pub fn ld_ahl_n8(&mut self, val: u8) {
+        self.mem_write_8(self.reg_get_16(&Reg16b::HL), val);
+    }
+    pub fn ld_r8_ahl(&mut self, reg: &Reg8b) {
+        self.reg_set_8(reg, self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    }
+    pub fn ld_ar16_a(&mut self, reg: &Reg16b) {
+        self.mem_write_8(self.reg_get_16(reg), self.reg_get_8(&Reg8b::A));
+    }
+    pub fn ld_an16_a(&mut self, addr: u16) {
+        self.mem_write_8(addr, self.reg_get_8(&Reg8b::A));
+    }
     // LDH
     // NOP
     // OR A

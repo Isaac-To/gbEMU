@@ -12,6 +12,7 @@ pub trait MemoryAccess {
     fn mem_stack_push_16(&mut self, value: u16);
     fn mem_stack_pop_8(&mut self) -> u8;
     fn mem_stack_pop_16(&mut self) -> u16;
+    fn mem_pc_read_8(&mut self) -> u8;
 }
 
 impl MemoryAccess for CPU {
@@ -53,5 +54,10 @@ impl MemoryAccess for CPU {
         let value = self.mem_read_16(sp + 1);
         self.reg_set_16(&Reg16b::SP, sp + 2);
         value
+    }
+    fn mem_pc_read_8(&mut self) -> u8 {
+        let pc = self.reg_get_16(&Reg16b::PC);
+        self.reg_set_16(&Reg16b::PC, pc.wrapping_add(1));
+        self.mem_read_8(pc)
     }
 }
