@@ -350,7 +350,81 @@ impl CPU {
     pub fn ld_an16_a(&mut self, addr: u16) {
         self.mem_write_8(addr, self.reg_get_8(&Reg8b::A));
     }
-    // LDH
+    // LDH - Load High
+    pub fn ldh_an16_a(&mut self, addr: u16) {
+        if 0xFF00 < addr && addr < 0xFFFF {
+            self.mem_write_8(addr, self.reg_get_8(&Reg8b::A));
+        }
+    }
+    pub fn ldh_ac_a(&mut self) {
+        let addr = 0xFF00 + self.reg_get_8(&Reg8b::C) as u16;
+        self.mem_write_8(addr, self.reg_get_8(&Reg8b::A));
+    }
+    pub fn ld_a_ar16(&mut self, reg: &Reg16b) {
+        self.reg_set_8(&Reg8b::A, self.mem_read_8(self.reg_get_16(reg)));
+    }
+    pub fn ld_a_an16(&mut self, addr: u16) {
+        self.reg_set_8(&Reg8b::A, self.mem_read_8(addr));
+    }
+    pub fn ldh_a_an16(&mut self, addr: u16) {
+        if 0xFF00 < addr && addr < 0xFFFF {
+            self.reg_set_8(&Reg8b::A, self.mem_read_8(addr));
+        }
+    }
+    pub fn ldh_a_ac(&mut self) {
+        let addr = 0xFF00 + self.reg_get_8(&Reg8b::C) as u16;
+        self.reg_set_8(&Reg8b::A, self.mem_read_8(addr));
+    }}
+    pub fn ld_ahli_a(&mut self) {
+        let hl = self.reg_get_16(&Reg16b::HL);
+        self.reg_set_8(&Reg8b::A, self.mem_read_8(hl));
+        self.reg_set_16(&Reg16b::HL, hl.wrapping_add(1));
+    }
+    pub fn ld_ahld_a(&mut self) {
+        let hl = self.reg_get_16(&Reg16b::HL);
+        self.reg_set_8(&Reg8b::A, self.mem_read_8(hl));
+        self.reg_set_16(&Reg16b::HL, hl.wrapping_sub(1));
+    }
+    pub fn ld_a_ahld(&mut self) {
+        let hl = self.reg_get_16(&Reg16b::HL);
+        self.reg_set_8(&Reg8b::A, self.mem_read_8(hl));
+        self.reg_set_16(&Reg16b::HL, hl.wrapping_sub(1));
+    }
+    pub fn ld_a_ahli(&mut self) {
+        let hl = self.reg_get_16(&Reg16b::HL);
+        self.reg_set_8(&Reg8b::A, self.mem_read_8(hl));
+        self.reg_set_16(&Reg16b::HL, hl.wrapping_add(1));
+    }
+    pub fn ld_sp_n16(&mut self, val: u16) {
+        self.reg_set_16(&Reg16b::SP, val);
+    }
+    pub fn ld_an16_sp(&mut self, addr: u16) {
+        self.mem_write_16(addr, self.reg_get_16(&Reg16b::SP));
+    }
+    pub fn ld_hl_sppe8(&mut self) {
+        let sp = self.reg_get_16(&Reg16b::SP);
+        let e8 = self.mem_pc_read_8() as i8 as i16;
+        let result = sp.wrapping_add_signed(e8);
+        self.reg_set_16(&Reg16b::HL, result);
+        let flags = (
+            0,
+            0,
+            if (sp & 0xF).wrapping_add_signed(e8 & 0xF) > 0xF {
+                1
+            } else {
+                0
+            },
+            if (sp & 0xFF).wrapping_add_signed(e8 & 0xFF) > 0xFF {
+                1
+            } else {
+                0
+            },
+        );
+        self.reg_set_flags(flags);
+    }
+    pub fn ld_sp_hl(&mut self) {
+        self.reg_set_16(&Reg16b::SP, self.reg_get_16(&Reg16b::HL));
+    }
     // NOP
     // OR A
     // POP
