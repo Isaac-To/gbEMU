@@ -374,7 +374,7 @@ impl CPU {
     pub fn ldh_a_ac(&mut self) {
         let addr = 0xFF00 + self.reg_get_8(&Reg8b::C) as u16;
         self.reg_set_8(&Reg8b::A, self.mem_read_8(addr));
-    }}
+    }
     pub fn ld_ahli_a(&mut self) {
         let hl = self.reg_get_16(&Reg16b::HL);
         self.reg_set_8(&Reg8b::A, self.mem_read_8(hl));
