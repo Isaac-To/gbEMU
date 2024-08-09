@@ -2,7 +2,7 @@
 // Individually explained here: https://rgbds.gbdev.io/docs/v0.8.0/gbz80.7
 use crate::hardware::{
     mem::MemoryAccess,
-    reg::{Reg16b, Reg8b, RegisterAccess},
+    reg::{Reg16b, Reg8b, RegisterAccess, Flag},
     CPU,
 };
 
@@ -22,6 +22,15 @@ a  - prepending an argument means it is accessing a memory address
 
 
 impl CPU {
+    fn _condition(&self, flag: Flag) -> bool {
+        let flags = self.reg_get_flags(); 
+        match flag {
+            Flag::Zero => flags.0 == 1,
+            Flag::Subtract => flags.1 == 1,
+            Flag::HalfCarry => flags.2 == 1,
+            Flag::Carry => flags.3 == 1,
+        }
+    }
     // ADC - Add with Carry to A
     fn _adc_a(&mut self, val: u8) {
         let flags = self.reg_get_flags();
@@ -147,8 +156,8 @@ impl CPU {
         self.mem_stack_push_16(pc);
         self.reg_set_16(&Reg16b::PC, addr);
     }
-    pub fn call_cc_n16(&mut self, addr: u16, flag: u8) {
-        if self.reg_get_flags().3 == flag {
+    pub fn call_cc_n16(&mut self, addr: u16, flag: Flag) {
+        if self._condition(flag) {
             self.call_n16(addr);
         }
     }
@@ -306,8 +315,8 @@ impl CPU {
     pub fn jp_n16(&mut self, addr: u16) {
         self.reg_set_16(&Reg16b::PC, addr);
     }
-    pub fn jp_cc_n16(&mut self, addr: u16, flag: u8) {
-        if self.reg_get_flags().3 == flag {
+    pub fn jp_cc_n16(&mut self, addr: u16, flag: Flag) {
+        if self._condition(flag) {
             self.jp_n16(addr);
         }
     }
@@ -320,8 +329,8 @@ impl CPU {
         let pc = self.reg_get_16(&Reg16b::PC);
         self.jp_n16(pc.wrapping_add_signed(s8));
     }
-    pub fn jr_cc_n16(&mut self, flag: u8) {
-        if self.reg_get_flags().3 == flag {
+    pub fn jr_cc_n16(&mut self, flag: Flag) {
+        if self._condition(flag) {
             self.jr_n16();
         }
     }
@@ -461,12 +470,61 @@ impl CPU {
         let val = self.reg_get_16(reg);
         self.mem_stack_push_16(val);
     }
-    // RES u3
-    // RET
-    // RETI
-    // RL
-    // RLA
-    // RLC
+    // RES u3 - Reset bit
+    fn res_u3_r8(&mut self, bit: u8, reg: &Reg8b) {
+        let val = self.reg_get_8(reg) & !(1 << bit);
+        self.reg_set_8(reg, val);
+    }
+    fn res_u3_ahl(&mut self, bit: u8) {
+        let val = self.mem_read_8(self.reg_get_16(&Reg16b::HL)) & !(1 << bit);
+        self.mem_write_8(self.reg_get_16(&Reg16b::HL), val);
+    }
+    // RET - Return from subroutine
+    // Something akin to POP PC
+    pub fn ret(&mut self) {
+        self.pop_r16(&Reg16b::PC);
+    }
+    pub fn ret_cc(&mut self, flag: Flag) {
+        if self._condition(flag) {
+            self.ret();
+        }
+    }
+    // RETI - Return from interrupt
+    // Enable interrupts and return from interrupt
+    pub fn reti(&mut self) {
+        self._ime = 1;
+        self.ret();
+    }
+    // RL - Rotate Left through Carry Flag
+    fn _rl(&mut self, val: u8) -> u8 {
+        let flags = self.reg_get_flags();
+        let carry = (val & 0x80) >> 7;
+        let result = (val << 1) | flags.3;
+        self.reg_set_flags((
+            if result == 0 { 1 } else { 0 },
+            0,
+            0,
+            carry,
+        ));
+        result
+    }
+    pub fn rl_r8(&mut self, reg: &Reg8b) {
+        let val = self.reg_get_8(reg);
+        let result = self._rl(val);
+        self.reg_set_8(reg, result);
+    }
+    pub fn rl_ahl(&mut self) {
+        let val = self.mem_read_8(self.reg_get_16(&Reg16b::HL));
+        let result = self._rl(val);
+        self.mem_write_8(self.reg_get_16(&Reg16b::HL), result);
+    }
+    // RLA - Rotate A Left through Carry Flag
+    pub fn rla(&mut self) {
+        let val = self.reg_get_8(&Reg8b::A);
+        let result = self._rl(val);
+        self.reg_set_8(&Reg8b::A, result);
+    }
+    // RLC - Rotate r8 Left
     // RLCA
     // RR
     // RRA
