@@ -426,9 +426,41 @@ impl CPU {
         self.reg_set_16(&Reg16b::SP, self.reg_get_16(&Reg16b::HL));
     }
     // NOP
+    pub fn nop(&mut self) {}
     // OR A
-    // POP
-    // PUSH
+    fn _or_a(&mut self, val: u8) {
+        let a = self.reg_get_8(&Reg8b::A);
+        let result = a | val;
+        self.reg_set_8(&Reg8b::A, result);
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, 0));
+    }
+    pub fn or_a_r8(&mut self, reg: &Reg8b) {
+        self._or_a(self.reg_get_8(reg));
+    }
+    pub fn or_a_ahl(&mut self) {
+        self._or_a(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    }
+    pub fn or_a_n8(&mut self, val: u8) {
+        self._or_a(val);
+    }
+    // POP - Pop from stack
+    pub fn pop_af(&mut self) {
+        let val = self.mem_stack_pop_16();
+        self.reg_set_16(&Reg16b::AF, val);
+    }
+    pub fn pop_r16(&mut self, reg: &Reg16b) {
+        let val = self.mem_stack_pop_16();
+        self.reg_set_16(reg, val);
+    }
+    // PUSH - Push to stack
+    pub fn push_af(&mut self) {
+        let val = self.reg_get_16(&Reg16b::AF);
+        self.mem_stack_push_16(val);
+    }
+    pub fn push_r16(&mut self, reg: &Reg16b) {
+        let val = self.reg_get_16(reg);
+        self.mem_stack_push_16(val);
+    }
     // RES u3
     // RET
     // RETI
