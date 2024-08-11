@@ -539,19 +539,143 @@ impl CPU {
         let val = self._rlc(self.reg_get_8(&Reg8b::A));
         self.reg_set_8(&Reg8b::A, val);
     }
-    // RR
-    // RRA
-    // RRC
-    // RRCA
-    // RST
-    // SBC
-    // SCF
-    // SET u3
-    // SLA
-    // SRA
-    // SRL
-    // STOP
-    // SUB
-    // SWAP
-    // XOR
+    // RR - Rotate Right through Carry Flag
+    fn _rr(&mut self, val: u8) -> u8 {
+        let flags = self.reg_get_flags();
+        let carry = val & 1;
+        let result = (val >> 1) | (flags.3 << 7);
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        result
+    }
+    pub fn rr_r8(&mut self, reg: &Reg8b) {
+        let val = self.reg_get_8(reg);
+        let result = self._rr(val);
+        self.reg_set_8(reg, result);
+    }
+    pub fn rr_ahl(&mut self) {
+        let val = self.mem_read_8(self.reg_get_16(&Reg16b::HL));
+        let result = self._rr(val);
+        self.mem_write_8(self.reg_get_16(&Reg16b::HL), result);
+    }
+    // RRA - Rotate A Right through Carry Flag
+    pub fn rra(&mut self) {
+        let val = self.reg_get_8(&Reg8b::A);
+        let result = self._rr(val);
+        self.reg_set_8(&Reg8b::A, result);
+    }
+    // RRC - Rotate r8 Right
+    fn _rrc(&mut self, val: u8) -> u8 {
+        let carry = val & 1;
+        let result = (val >> 1) | (carry << 7);
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        result
+    }
+    pub fn rrc_r8(&mut self, reg: &Reg8b) {
+        let val = self._rrc(self.reg_get_8(reg));
+        self.reg_set_8(reg, val);
+    }
+    pub fn rrc_ahl(&mut self) {
+        let loc = self.reg_get_16(&Reg16b::HL);
+        let val = self._rrc(self.mem_read_8(loc));
+        self.mem_write_8(loc, val);
+    }
+    // RRCA - Rotate A right
+    pub fn rrca(&mut self) {
+        let val = self._rrc(self.reg_get_8(&Reg8b::A));
+        self.reg_set_8(&Reg8b::A, val);
+    }
+    // RST - Restart
+    // Something like "CALL" for vecs but faster
+    pub fn rst(&mut self, vec: u16) {
+        self.push_r16(&Reg16b::PC);
+        self.reg_set_16(&Reg16b::PC, vec);
+    }
+    // SBC A - Subtract with Carry
+    fn _sbc_a(&mut self, val: u8) {
+        let a = self.reg_get_8(&Reg8b::A);
+        let carry = self.reg_get_flags().3;
+        let result = a.wrapping_sub(val).wrapping_sub(carry);
+        let flags = (
+            if result == 0 { 1 } else { 0 },
+            1,
+            (a & 0xf) < (val & 0xf) + carry,
+            (a as u16) < (val as u16) + (carry as u16),
+        );
+        self.reg_set_flags(flags);
+        self.reg_set_8(&Reg8b::A, result);
+    }
+    pub fn sbc_a_r8(&mut self, reg: &Reg8b) {
+        self._sbc_a(self.reg_get_8(reg));
+    }
+    pub fn sbc_a_ahl(&mut self) {
+        self._sbc_a(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    }
+    pub fn sbc_a_n8(&mut self, val: u8) {
+        self._sbc_a(val);
+    }
+    // SCF - Set Carry Flag
+    pub fn scf(&mut self) {
+        let flags = self.reg_get_flags();
+        self.reg_set_flags((flags.0, 0, 0, 1));
+    }
+    // SET u3 - Set bit u3 in r8
+    fn _set(&mut self, val: u8, bit: u8) -> u8 {
+        val | (1 << bit)
+    }
+    // SLA - Shift Left Arithmetic
+    fn _sla(&mut self, val: u8) -> u8 {
+        let carry = (val & 0x80) >> 7;
+        let result = val << 1;
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        result
+    }
+    pub fn sla_r8(&mut self, reg: &Reg8b) {
+        let val = self._sla(self.reg_get_8(reg));
+        self.reg_set_8(reg, val);
+    }
+    pub fn sla_ahl(&mut self) {
+        let loc = self.reg_get_16(&Reg16b::HL);
+        let val = self._sla(self.mem_read_8(loc));
+        self.mem_write_8(loc, val);
+    }
+    // SRA - Shift Right Arithmetic
+    fn _sra(&mut self, val: u8) -> u8 {
+        let carry = val & 1;
+        let result = (val >> 1) | (val & 0x80);
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        result
+    }
+    pub fn sra_r8(&mut self, reg: &Reg8b) {
+        let val = self._sra(self.reg_get_8(reg));
+        self.reg_set_8(reg, val);
+    }
+    pub fn sra_ahl(&mut self) {
+        let loc = self.reg_get_16(&Reg16b::HL);
+        let val = self._sra(self.mem_read_8(loc));
+        self.mem_write_8(loc, val);
+    }
+    // SRL - Shift Right Logical
+    fn _srl(&mut self, val: u8) -> u8 {
+        let carry = val & 1;
+        let result = val >> 1;
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        result
+    }
+    pub fn srl_r8(&mut self, reg: &Reg8b) {
+        let val = self._srl(self.reg_get_8(reg));
+        self.reg_set_8(reg, val);
+    }
+    pub fn srl_ahl(&mut self) {
+        let loc = self.reg_get_16(&Reg16b::HL);
+        let val = self._srl(self.mem_read_8(loc));
+        self.mem_write_8(loc, val);
+    }
+    // STOP - Halt CPU until button press
+    // Enters low power mode, also used for double and normal speed modes
+    pub fn stop(&mut self) {
+        self.halt = true;
+    }
+    // SUB - Subtract
+    // SWAP - Swap upper and lower nibbles
+    // XOR - Bitwise XOR
 }
