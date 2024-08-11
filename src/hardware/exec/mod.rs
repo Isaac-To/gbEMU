@@ -675,7 +675,67 @@ impl CPU {
     pub fn stop(&mut self) {
         self.halt = true;
     }
-    // SUB - Subtract
+    // SUB A - Subtract value from A
+    fn _sub_a(&mut self, val: u8) {
+        let a = self.reg_get_8(&Reg8b::A);
+        let result = a.wrapping_sub(val);
+        let flags = (
+            if result == 0 { 1 } else { 0 },
+            1,
+            (a & 0xf) < (val & 0xf),
+            (a as u16) < (val as u16),
+        );
+        self.reg_set_flags(flags);
+        self.reg_set_8(&Reg8b::A, result);
+    }
+    pub fn sub_a_r8(&mut self, reg: &Reg8b) {
+        self._sub_a(self.reg_get_8(reg));
+    }
+    pub fn sub_a_ahl(&mut self) {
+        self._sub_a(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    }
+    pub fn sub_a_n8(&mut self, val: u8) {
+        self._sub_a(val);
+    }
     // SWAP - Swap upper and lower nibbles
+    fn _swap(val: u8) -> u8 {
+        (val << 4) | (val >> 4)
+        let flags = (
+            if val == 0 { 1 } else { 0 },
+            0,
+            0,
+            0,
+        );
+    }
+    pub fn swap_r8(&mut self, reg: &Reg8b) {
+        let val = Self::_swap(self.reg_get_8(reg));
+        self.reg_set_8(reg, val);
+    }
+    pub fn swap_ahl(&mut self) {
+        let loc = self.reg_get_16(&Reg16b::HL);
+        let val = Self::_swap(self.mem_read_8(loc));
+        self.mem_write_8(loc, val);
+    }
     // XOR - Bitwise XOR
+    fn _xor(&mut self, val: u8) {
+        let a = self.reg_get_8(&Reg8b::A);
+        let result = a ^ val;
+        let flags = (
+            if result == 0 { 1 } else { 0 },
+            0,
+            0,
+            0,
+        );
+        self.reg_set_flags(flags);
+        self.reg_set_8(&Reg8b::A, result);
+    }
+    pub fn xor_r8(&mut self, reg: &Reg8b) {
+        self._xor(self.reg_get_8(reg));
+    }
+    pub fn xor_ahl(&mut self) {
+        self._xor(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
+    }
+    pub fn xor_n8(&mut self, val: u8) {
+        self._xor(val);
+    }
 }
