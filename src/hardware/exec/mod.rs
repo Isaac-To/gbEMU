@@ -2,7 +2,7 @@
 // Individually explained here: https://rgbds.gbdev.io/docs/v0.8.0/gbz80.7
 use crate::hardware::{
     mem::MemoryAccess,
-    reg::{Reg16b, Reg8b, RegisterAccess, Flag},
+    reg::{Flag, Reg16b, Reg8b, RegisterAccess},
     CPU,
 };
 
@@ -20,10 +20,9 @@ _  - prepending the function name means it is a helper function
 a  - prepending an argument means it is accessing a memory address
 */
 
-
 impl CPU {
     fn _condition(&self, flag: Flag) -> bool {
-        let flags = self.reg_get_flags(); 
+        let flags = self.reg_get_flags();
         match flag {
             Flag::Zero => flags.0 == 1,
             Flag::Subtract => flags.1 == 1,
@@ -500,12 +499,7 @@ impl CPU {
         let flags = self.reg_get_flags();
         let carry = (val & 0x80) >> 7;
         let result = (val << 1) | flags.3;
-        self.reg_set_flags((
-            if result == 0 { 1 } else { 0 },
-            0,
-            0,
-            carry,
-        ));
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
         result
     }
     pub fn rl_r8(&mut self, reg: &Reg8b) {
@@ -525,7 +519,26 @@ impl CPU {
         self.reg_set_8(&Reg8b::A, result);
     }
     // RLC - Rotate r8 Left
-    // RLCA
+    fn _rlc(&mut self, val: u8) -> u8 {
+        let carry = (val & 0x80) >> 7;
+        let result = (val << 1) | carry;
+        self.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        result
+    }
+    pub fn rlc_r8(&mut self, reg: &Reg8b) {
+        let val = self._rlc(self.reg_get_8(reg));
+        self.reg_set_8(reg, val);
+    }
+    pub fn rlc_ahl(&mut self) {
+        let loc = self.reg_get_16(&Reg16b::HL);
+        let val = self._rlc(self.mem_read_8(loc));
+        self.mem_write_8(loc, val);
+    }
+    // RLCA - Rotate A left
+    pub fn rlca(&mut self) {
+        let val = self._rlc(self.reg_get_8(&Reg8b::A));
+        self.reg_set_8(&Reg8b::A, val);
+    }
     // RR
     // RRA
     // RRC
