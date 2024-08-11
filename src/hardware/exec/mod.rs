@@ -619,8 +619,17 @@ impl CPU {
         self.reg_set_flags((flags.0, 0, 0, 1));
     }
     // SET u3 - Set bit u3 in r8
-    fn _set(&mut self, val: u8, bit: u8) -> u8 {
+    fn _set_u3(&mut self, val: u8, bit: u8) -> u8 {
         val | (1 << bit)
+    }
+    pub fn set_u3_r8(&mut self, reg: &Reg8b, bit: u8) {
+        let val = self._set(self.reg_get_8(reg), bit);
+        self.reg_set_8(reg, val);
+    }
+    pub fn set_u3_ahl(&mut self, bit: u8) {
+        let loc = self.reg_get_16(&Reg16b::HL);
+        let val = self._set(self.mem_read_8(loc), bit);
+        self.mem_write_8(loc, val);
     }
     // SLA - Shift Left Arithmetic
     fn _sla(&mut self, val: u8) -> u8 {
@@ -717,7 +726,7 @@ impl CPU {
         self.mem_write_8(loc, val);
     }
     // XOR - Bitwise XOR
-    fn _xor(&mut self, val: u8) {
+    fn _xor_a(&mut self, val: u8) {
         let a = self.reg_get_8(&Reg8b::A);
         let result = a ^ val;
         let flags = (
@@ -729,13 +738,13 @@ impl CPU {
         self.reg_set_flags(flags);
         self.reg_set_8(&Reg8b::A, result);
     }
-    pub fn xor_r8(&mut self, reg: &Reg8b) {
+    pub fn xor_a_r8(&mut self, reg: &Reg8b) {
         self._xor(self.reg_get_8(reg));
     }
-    pub fn xor_ahl(&mut self) {
+    pub fn xor_a_ahl(&mut self) {
         self._xor(self.mem_read_8(self.reg_get_16(&Reg16b::HL)));
     }
-    pub fn xor_n8(&mut self, val: u8) {
+    pub fn xor_a_n8(&mut self, val: u8) {
         self._xor(val);
     }
 }
