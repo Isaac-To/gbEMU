@@ -56,13 +56,13 @@ impl Reg16b {
     }
 }
 
-// Flag Register
-// STORED IN F REGISTER
-// BIT 0-3: Unused
-// BIT 4: Carry Flag
-// BIT 5: Half Carry Flag
-// BIT 6: Subtract Flag
-// BIT 7: Zero Flag
+/// Flag Register
+/// STORED IN F REGISTER
+/// BIT 0-3: Unused
+/// BIT 4: Carry Flag
+/// BIT 5: Half Carry Flag
+/// BIT 6: Subtract Flag
+/// BIT 7: Zero Flag
 
 #[derive(Debug, PartialEq)]
 pub enum Flag {
