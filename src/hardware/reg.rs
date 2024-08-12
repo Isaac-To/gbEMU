@@ -82,19 +82,24 @@ pub trait RegisterAccess {
 }
 
 impl RegisterAccess for CPU {
+    /// Read 8-bit value from register
     fn reg_get_8(&self, reg: &Reg8b) -> u8 {
         self.registers[reg.value() as usize]
     }
+    /// Write 8-bit value to register
     fn reg_set_8(&mut self, reg: &Reg8b, value: u8) {
         self.registers[reg.value() as usize] = value;
     }
+    /// Read 16-bit value from register
     fn reg_get_16(&self, reg: &Reg16b) -> u16 {
         (self.reg_get_8(&reg.value().0) as u16) << 8 | self.reg_get_8(&reg.value().1) as u16
     }
+    /// Write 16-bit value to register
     fn reg_set_16(&mut self, reg: &Reg16b, value: u16) {
         self.reg_set_8(&reg.value().0, (value >> 8) as u8);
         self.reg_set_8(&reg.value().1, value as u8);
     }
+    /// Read flags from F register
     fn reg_get_flags(&self) -> (u8, u8, u8, u8) {
         let f = self.reg_get_8(&Reg8b::F);
         (
@@ -104,6 +109,7 @@ impl RegisterAccess for CPU {
             (f >> Flag::Carry as u8) & 1,
         )
     }
+    /// Write flags to F register
     fn reg_set_flags(&mut self, (zero, subtract, half_carry, carry): (u8, u8, u8, u8)) {
         let mut f = 0;
         f |= zero << Flag::Zero as u8;

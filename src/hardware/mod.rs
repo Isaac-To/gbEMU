@@ -7,23 +7,25 @@ use crate::hardware::{
 };
 
 pub(crate) struct CPU {
-    // Registers
-    // PC and SP are 8,9 and 10,11 respectively
+    /// Registers
+    /// PC and SP are 8,9 and 10,11 respectively
     registers: [u8; 12],
 
-    // Memory
+    /// Memory
     memory: [u8; 8192],
 
-    // Video memory
+    /// Video memory
     vram: [u8; 8192],
 
-    // Internal Flags
+    /// Internal Flags
     _ime: u8,
     _interrupt_iminent: u8,
     _low_power: u8
 }
 
 impl CPU {
+    /// Create a new CPU
+    /// All registers are initialized to 0 except SP which is set to 8191 to match the end of memory
     pub fn new() -> CPU {
         let mut cpu = CPU {
             registers: [0; 12],
