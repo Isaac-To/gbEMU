@@ -1,5 +1,8 @@
 use crate::hardware::CPU;
 
+/// Registers are 8-bit and 16-bit values that are used to store data and perform operations.
+
+/// Reg8b is an enum that represents the 8-bit registers of the CPU.
 pub enum Reg8b {
     A,
     B,
@@ -15,6 +18,7 @@ pub enum Reg8b {
     C2,
 }
 
+/// Implement a method to get the value of the register this is used to index the registers array.
 impl Reg8b {
     fn value(&self) -> u8 {
         match self {
@@ -34,6 +38,7 @@ impl Reg8b {
     }
 }
 
+/// Reg16b is an enum that represents the 16-bit registers of the CPU.
 pub enum Reg16b {
     AF,
     BC,
@@ -43,6 +48,7 @@ pub enum Reg16b {
     PC, // Program Counter
 }
 
+/// Implement a method to get the value of the register this is used to index the registers array.
 impl Reg16b {
     fn value(&self) -> (Reg8b, Reg8b) {
         match self {
@@ -65,6 +71,7 @@ impl Reg16b {
 /// BIT 7: Zero Flag
 
 #[derive(Debug, PartialEq)]
+/// Flags that can be set in the F register
 pub enum Flag {
     Zero = 7,      // Z
     Subtract = 6,  // N
@@ -72,6 +79,7 @@ pub enum Flag {
     Carry = 4,     // C
 }
 
+/// RegisterAccess trait for CPU to allow read write access to registers
 pub trait RegisterAccess {
     fn reg_get_8(&self, reg: &Reg8b) -> u8;
     fn reg_set_8(&mut self, reg: &Reg8b, value: u8);
@@ -81,6 +89,7 @@ pub trait RegisterAccess {
     fn reg_set_flags(&mut self, flags: (u8, u8, u8, u8));
 }
 
+/// Implement RegisterAccess for CPU
 impl RegisterAccess for CPU {
     /// Read 8-bit value from register
     fn reg_get_8(&self, reg: &Reg8b) -> u8 {

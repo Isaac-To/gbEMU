@@ -8,12 +8,10 @@ use crate::hardware::{
     CPU,
 };
 
+/// ISA trait for CPU
 /// Functions are named as follows:
-/// 
-/// _  - prepending the function name means it is a helper function
-/// 
-/// a  - prepending an argument means it is accessing a memory address
-
+/// * _  - prepending the function name means it is a helper function
+/// * a  - prepending an argument means it is accessing a memory address
 pub trait ISA {
     fn _xor_a(&mut self, val: u8);
     fn _swap(&mut self, val: u8) -> u8;

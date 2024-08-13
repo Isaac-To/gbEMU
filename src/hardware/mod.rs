@@ -7,6 +7,7 @@ use crate::hardware::{
     mem::MemoryAccess,
 };
 
+/// CPU struct
 pub(crate) struct CPU {
     /// Registers
     /// PC and SP are 8,9 and 10,11 respectively

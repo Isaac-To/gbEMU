@@ -3,6 +3,7 @@ use crate::hardware::{
     reg::{Reg16b, Reg8b, RegisterAccess},
 };
 
+/// MemoryAccess trait for CPU
 pub trait MemoryAccess {
     fn mem_read_8(&self, addr: u16) -> u8;
     fn mem_read_16(&self, addr: u16) -> u16;
@@ -15,6 +16,7 @@ pub trait MemoryAccess {
     fn mem_pc_read_8(&mut self) -> u8;
 }
 
+/// Implement MemoryAccess for CPU
 impl MemoryAccess for CPU {
     /// Read 8-bit value from memory
     fn mem_read_8(&self, addr: u16) -> u8 {
