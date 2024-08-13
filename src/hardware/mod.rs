@@ -1,6 +1,7 @@
 pub mod exec;
-pub mod reg;
 pub mod mem;
+pub mod reg;
+pub mod rom;
 use crate::hardware::{
     reg::{Reg16b, Reg8b, RegisterAccess},
     mem::MemoryAccess,
