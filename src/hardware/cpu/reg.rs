@@ -1,4 +1,4 @@
-use crate::hardware::CPU;
+use super::CPU;
 
 /// Registers are 8-bit and 16-bit values that are used to store data and perform operations.
 

@@ -1,7 +1,5 @@
 use std::fs;
 
-use crate::hardware::CPU;
-
 #[derive(Clone, Debug)]
 /// ROM Metadata
 /// This struct contains all the metadata of a ROM
