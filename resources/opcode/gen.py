@@ -13,7 +13,7 @@ def write_to_rust_file(f, key, type):
     op = f'''
     operands: [{
     ",".join([f"""
-    Operands {{
+    Operand {{
         name: "{operand["name"]}",
         bytes: {int(0 if operand.get("bytes") is None else operand.get("bytes"))},
         immediate: {str(operand["immediate"]).lower()}
@@ -44,12 +44,12 @@ if __name__ == "__main__":
     f.write("""pub struct Opcodes {
     pub mnemonic: &'static str,
     pub cycles: [u8; 2],
-    pub operands: [Operands; 3],
+    pub operands: [Operand; 3],
     pub immediate: bool,
     pub flags: Flags,
 }
 
-pub struct Operands {
+pub struct Operand {
     pub name: &'static str,
     pub bytes: u8,
     pub immediate: bool,
