@@ -11,28 +11,27 @@ def write_to_rust_file(f, key, type):
     while len(cycles) < 2:
         cycles.append(0)
     op = f'''
-    operands: [{
+        operands: [{
     ",".join([f"""
-    Operand {{
-        name: "{operand["name"]}",
-        bytes: {int(0 if operand.get("bytes") is None else operand.get("bytes"))},
-        immediate: {str(operand["immediate"]).lower()}
-    }}""" for operand in operands
+        Operand {{
+            name: "{operand["name"]}",
+            bytes: {int(0 if operand.get("bytes") is None else operand.get("bytes"))},
+            immediate: {str(operand["immediate"]).lower()}
+        }}""" for operand in operands
     ])
     }],'''
-    f.write(f'''pub const H{key.upper()}: Opcodes = Opcodes {{
-    mnemonic: "{type[key]["mnemonic"]}",
-    cycles: {type[key]["cycles"]},{op}
-    immediate: {str(type[key]["immediate"]).lower()},
-    flags: Flags {{
-        z: "{type[key]["flags"]["Z"]}",
-        n: "{type[key]["flags"]["N"]}",
-        h: "{type[key]["flags"]["H"]}",
-        c: "{type[key]["flags"]["C"]}",
-    }}
-}};
-
-''')
+    f.write(f'''({key}, Opcode {{
+        mnemonic: "{type[key]["mnemonic"]}",
+        cycles: {type[key]["cycles"]},{op}
+        immediate: {str(type[key]["immediate"]).lower()},
+        flags: Flags {{
+            z: "{type[key]["flags"]["Z"]}",
+            n: "{type[key]["flags"]["N"]}",
+            h: "{type[key]["flags"]["H"]}",
+            c: "{type[key]["flags"]["C"]}",
+        }}
+    }}),
+    ''')
 
 if __name__ == "__main__":
     json_file = open("resources/opcode/opcodes.json")
@@ -41,7 +40,8 @@ if __name__ == "__main__":
     f = open("src/hardware/cpu/opcodes.rs", "w")
     unprefixed = data["unprefixed"]
     cbprefixed = data["cbprefixed"]
-    f.write("""pub struct Opcodes {
+    f.write("""#[derive(Clone, Debug)]
+    pub struct Opcode {
     pub mnemonic: &'static str,
     pub cycles: [u8; 2],
     pub operands: [Operand; 3],
@@ -49,12 +49,16 @@ if __name__ == "__main__":
     pub flags: Flags,
 }
 
+
+#[derive(Clone, Debug)]
 pub struct Operand {
     pub name: &'static str,
     pub bytes: u8,
     pub immediate: bool,
 }
 
+
+#[derive(Clone, Debug)]
 pub struct Flags {
     pub z: &'static str,
     pub n: &'static str,
@@ -64,7 +68,20 @@ pub struct Flags {
 
 """)
 
+f.write("pub static OPCODES: &[(u8, Opcode)] = &[ \n")
 for key in unprefixed:
     write_to_rust_file(f, key, unprefixed)
 # for key in cbprefixed:
 #     write_to_rust_file(f, key, unprefixed)
+f.write("""
+];
+
+pub fn opcode_get(opcode: &u8) -> Opcode {
+    for (key, value) in OPCODES.iter() {
+        if opcode == key {
+            return value.clone();
+        }
+    }
+    panic!("Opcode not found: {}", opcode);
+}
+""")

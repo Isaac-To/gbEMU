@@ -1,5 +1,7 @@
 use std::fs;
 
+use super::cpu::opcodes::*;
+
 #[derive(Clone, Debug)]
 /// ROM Metadata
 /// This struct contains all the metadata of a ROM
@@ -47,6 +49,7 @@ pub struct ROM {
 pub trait ROMAccess {
     fn new(location: &str) -> Self;
     fn get_metadata(&self) -> ROMMetadata;
+    fn decode(&mut self, addr: usize) -> Opcode;
 }
 
 /// Implement ROMAccess for ROM
@@ -83,12 +86,19 @@ impl ROMAccess for ROM {
         ROM {
             location: location.to_string(),
             loaded: false,
-            data: Vec::new(),
+            data: data,
             metadata: metadata,
         }
     }
     /// Get the metadata of the ROM (READONLY)
     fn get_metadata(&self) -> ROMMetadata {
         self.metadata.clone()
+    }
+
+    fn decode(&mut self, addr: usize) -> Opcode {
+        // Decode the ROM
+        let opcode = self.data.get(addr as usize).unwrap();
+        // Look up the opcode from opcodes.rs
+        return opcode_get(opcode);
     }
 }
