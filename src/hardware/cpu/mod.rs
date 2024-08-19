@@ -1,5 +1,6 @@
 pub mod isa;
 pub mod reg;
+pub mod opcodes;
 
 use super::System;
 
