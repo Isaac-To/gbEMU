@@ -13,11 +13,11 @@ def write_to_rust_file(f, key, type):
     op = f'''
         operands: [{
     ",".join([f"""
-        Operand {{
-            name: "{operand["name"]}",
-            bytes: {int(0 if operand.get("bytes") is None else operand.get("bytes"))},
-            immediate: {str(operand["immediate"]).lower()}
-        }}""" for operand in operands
+            Operand {{
+                name: "{operand["name"]}",
+                bytes: {int(0 if operand.get("bytes") is None else operand.get("bytes"))},
+                immediate: {str(operand["immediate"]).lower()}
+            }}""" for operand in operands
     ])
     }],'''
     f.write(f'''({key}, Opcode {{
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     unprefixed = data["unprefixed"]
     cbprefixed = data["cbprefixed"]
     f.write("""#[derive(Clone, Debug)]
-    pub struct Opcode {
+pub struct Opcode {
     pub mnemonic: &'static str,
     pub cycles: [u8; 2],
     pub operands: [Operand; 3],
@@ -49,14 +49,12 @@ if __name__ == "__main__":
     pub flags: Flags,
 }
 
-
 #[derive(Clone, Debug)]
 pub struct Operand {
     pub name: &'static str,
     pub bytes: u8,
     pub immediate: bool,
 }
-
 
 #[derive(Clone, Debug)]
 pub struct Flags {
@@ -66,18 +64,17 @@ pub struct Flags {
     pub c: &'static str,
 }
 
-""")
+pub fn unprefixed_opcode_get(opcode: &u8) -> Opcode {
+    for (key, value) in UNPREFIXED_OPCODES.iter() {
+        if opcode == key {
+            return value.clone();
+        }
+    }
+    panic!("Opcode not found: {}", opcode);
+}
 
-f.write("pub static OPCODES: &[(u8, Opcode)] = &[ \n")
-for key in unprefixed:
-    write_to_rust_file(f, key, unprefixed)
-# for key in cbprefixed:
-#     write_to_rust_file(f, key, unprefixed)
-f.write("""
-];
-
-pub fn opcode_get(opcode: &u8) -> Opcode {
-    for (key, value) in OPCODES.iter() {
+pub fn cb_prefixed_opcode_get(opcode: &u8) -> Opcode {
+    for (key, value) in CB_PREFIXED_OPCODES.iter() {
         if opcode == key {
             return value.clone();
         }
@@ -98,4 +95,16 @@ impl std::fmt::Display for Opcode {
         write!(f, "{}", output)
     }
 }
-""")
+
+pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
+\t""")
+for key in unprefixed:
+    write_to_rust_file(f, key, unprefixed)
+f.write("""
+];
+pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
+\t""")
+for key in cbprefixed:
+    write_to_rust_file(f, key, unprefixed)
+f.write("""
+];""")
