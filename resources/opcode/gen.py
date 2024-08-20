@@ -84,4 +84,18 @@ pub fn opcode_get(opcode: &u8) -> Opcode {
     }
     panic!("Opcode not found: {}", opcode);
 }
+
+impl std::fmt::Display for Opcode {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut output = self.mnemonic.to_string();
+        output.push_str(" ");
+        for operand in &self.operands {
+            if operand.name == "NULL" {
+                break;
+            }
+            output.push_str(&format!("{} ", operand.name));
+        }
+        write!(f, "{}", output)
+    }
+}
 """)
