@@ -12,6 +12,7 @@ pub struct Operand {
     pub name: &'static str,
     pub bytes: u8,
     pub immediate: bool,
+    pub value: u16,
 }
 
 #[derive(Clone, Debug)]
@@ -48,7 +49,15 @@ impl std::fmt::Display for Opcode {
             if operand.name == "NULL" {
                 break;
             }
-            output.push_str(&format!("{} ", operand.name));
+            if operand.bytes != 0 {
+                if operand.immediate == true {
+                    output.push_str(&format!("{} ", format!("0x{:x}", operand.value)));
+                } else {
+                    output.push_str(&format!("{} ", format!("(0x{:x})", operand.value)));
+                }
+            } else {
+                output.push_str(&format!("{} ", operand.name));
+            }
         }
         write!(f, "{}", output)
     }
@@ -62,17 +71,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -89,17 +101,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -116,17 +131,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -143,17 +161,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -170,17 +191,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -197,17 +221,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -224,17 +251,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -251,17 +281,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -278,17 +311,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -305,17 +341,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -332,17 +371,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -359,17 +401,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -386,17 +431,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -413,17 +461,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -440,17 +491,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -467,17 +521,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -494,17 +551,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -521,17 +581,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -548,17 +611,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -575,17 +641,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -602,17 +671,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -629,17 +701,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -656,17 +731,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -683,17 +761,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -710,17 +791,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -737,17 +821,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -764,17 +851,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -791,17 +881,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -818,17 +911,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -845,17 +941,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -872,17 +971,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -899,17 +1001,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -926,17 +1031,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NZ",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -953,17 +1061,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -980,17 +1091,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -1007,17 +1121,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1034,17 +1151,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1061,17 +1181,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1088,17 +1211,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1115,17 +1241,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1142,17 +1271,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "Z",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1169,17 +1301,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1196,17 +1331,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -1223,17 +1361,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1250,17 +1391,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1277,17 +1421,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1304,17 +1451,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1331,17 +1481,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1358,17 +1511,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1385,17 +1541,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1412,17 +1571,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -1439,17 +1601,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1466,17 +1631,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -1493,17 +1661,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -1520,17 +1691,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -1547,17 +1721,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1574,17 +1751,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1601,17 +1781,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1628,17 +1811,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -1655,17 +1841,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1682,17 +1871,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1709,17 +1901,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1736,17 +1931,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1763,17 +1961,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1790,17 +1991,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1817,17 +2021,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1844,17 +2051,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1871,17 +2081,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1898,17 +2111,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1925,17 +2141,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -1952,17 +2171,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -1979,17 +2201,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2006,17 +2231,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2033,17 +2261,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2060,17 +2291,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2087,17 +2321,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2114,17 +2351,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2141,17 +2381,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2168,17 +2411,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -2195,17 +2441,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2222,17 +2471,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2249,17 +2501,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2276,17 +2531,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2303,17 +2561,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2330,17 +2591,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2357,17 +2621,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2384,17 +2651,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -2411,17 +2681,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2438,17 +2711,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2465,17 +2741,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2492,17 +2771,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2519,17 +2801,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2546,17 +2831,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2573,17 +2861,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2600,17 +2891,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -2627,17 +2921,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2654,17 +2951,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2681,17 +2981,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2708,17 +3011,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2735,17 +3041,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2762,17 +3071,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2789,17 +3101,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2816,17 +3131,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -2843,17 +3161,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2870,17 +3191,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2897,17 +3221,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2924,17 +3251,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2951,17 +3281,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -2978,17 +3311,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3005,17 +3341,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3032,17 +3371,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3059,17 +3401,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3086,17 +3431,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3113,17 +3461,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3140,17 +3491,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3167,17 +3521,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3194,17 +3551,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3221,17 +3581,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3248,17 +3611,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3275,17 +3641,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3302,17 +3671,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3329,17 +3701,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3356,17 +3731,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3383,17 +3761,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3410,17 +3791,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3437,17 +3821,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3464,17 +3851,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3491,17 +3881,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3518,17 +3911,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3545,17 +3941,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3572,17 +3971,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3599,17 +4001,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3626,17 +4031,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3653,17 +4061,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3680,17 +4091,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3707,17 +4121,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3734,17 +4151,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3761,17 +4181,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3788,17 +4211,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3815,17 +4241,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3842,17 +4271,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3869,17 +4301,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3896,17 +4331,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -3923,17 +4361,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3950,17 +4391,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -3977,17 +4421,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4004,17 +4451,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4031,17 +4481,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4058,17 +4511,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4085,17 +4541,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4112,17 +4571,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -4139,17 +4601,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4166,17 +4631,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4193,17 +4661,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4220,17 +4691,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4247,17 +4721,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4274,17 +4751,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4301,17 +4781,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4328,17 +4811,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -4355,17 +4841,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4382,17 +4871,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4409,17 +4901,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4436,17 +4931,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4463,17 +4961,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4490,17 +4991,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4517,17 +5021,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4544,17 +5051,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -4571,17 +5081,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4598,17 +5111,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4625,17 +5141,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4652,17 +5171,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4679,17 +5201,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4706,17 +5231,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4733,17 +5261,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4760,17 +5291,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -4787,17 +5321,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4814,17 +5351,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4841,17 +5381,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4868,17 +5411,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4895,17 +5441,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4922,17 +5471,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4949,17 +5501,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -4976,17 +5531,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -5003,17 +5561,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5030,17 +5591,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5057,17 +5621,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5084,17 +5651,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5111,17 +5681,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5138,17 +5711,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5165,17 +5741,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5192,17 +5771,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -5219,17 +5801,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5246,17 +5831,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NZ",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5273,17 +5861,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5300,17 +5891,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NZ",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5327,17 +5921,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5354,17 +5951,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NZ",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5381,17 +5981,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5408,17 +6011,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5435,17 +6041,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$00",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5462,17 +6071,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "Z",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5489,17 +6101,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5516,17 +6131,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "Z",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5543,17 +6161,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5570,17 +6191,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "Z",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5597,17 +6221,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5624,17 +6251,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5651,17 +6281,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$08",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5678,17 +6311,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5705,17 +6341,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5732,17 +6371,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5759,17 +6401,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5786,17 +6431,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5813,17 +6461,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5840,17 +6491,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5867,17 +6521,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$10",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5894,17 +6551,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5921,17 +6581,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5948,17 +6611,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -5975,17 +6641,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6002,17 +6671,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6029,17 +6701,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6056,17 +6731,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6083,17 +6761,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$18",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6110,17 +6791,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a8",
                 bytes: 1,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -6137,17 +6821,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6164,17 +6851,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -6191,17 +6881,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6218,17 +6911,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6245,17 +6941,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6272,17 +6971,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6299,17 +7001,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$20",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6326,17 +7031,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6353,17 +7061,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6380,17 +7091,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -6407,17 +7121,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6434,17 +7151,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6461,17 +7181,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6488,17 +7211,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6515,17 +7241,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$28",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6542,17 +7271,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a8",
                 bytes: 1,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -6569,17 +7301,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "AF",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6596,17 +7331,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -6623,17 +7361,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6650,17 +7391,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6677,17 +7421,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "AF",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6704,17 +7451,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6731,17 +7481,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$30",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6758,17 +7511,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6785,17 +7541,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6812,17 +7571,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -6839,17 +7601,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6866,17 +7631,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6893,17 +7661,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6920,17 +7691,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6947,17 +7721,20 @@ pub static UNPREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$38",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -6977,17 +7754,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7004,17 +7784,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7031,17 +7814,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -7058,17 +7844,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7085,17 +7874,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7112,17 +7904,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7139,17 +7934,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7166,17 +7964,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7193,17 +7994,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -7220,17 +8024,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7247,17 +8054,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -7274,17 +8084,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7301,17 +8114,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7328,17 +8144,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7355,17 +8174,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7382,17 +8204,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7409,17 +8234,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7436,17 +8264,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7463,17 +8294,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -7490,17 +8324,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7517,17 +8354,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7544,17 +8384,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7571,17 +8414,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7598,17 +8444,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7625,17 +8474,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7652,17 +8504,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7679,17 +8534,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -7706,17 +8564,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7733,17 +8594,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7760,17 +8624,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7787,17 +8654,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7814,17 +8684,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7841,17 +8714,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NZ",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7868,17 +8744,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7895,17 +8774,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -7922,17 +8804,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7949,17 +8834,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -7976,17 +8864,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8003,17 +8894,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8030,17 +8924,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8057,17 +8954,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "Z",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8084,17 +8984,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8111,17 +9014,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -8138,17 +9044,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8165,17 +9074,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8192,17 +9104,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8219,17 +9134,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8246,17 +9164,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8273,17 +9194,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8300,17 +9224,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8327,17 +9254,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -8354,17 +9284,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8381,17 +9314,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -8408,17 +9344,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -8435,17 +9374,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -8462,17 +9404,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8489,17 +9434,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8516,17 +9464,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8543,17 +9494,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -8570,17 +9524,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8597,17 +9554,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8624,17 +9584,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8651,17 +9614,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8678,17 +9644,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8705,17 +9674,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8732,17 +9704,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8759,17 +9734,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8786,17 +9764,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8813,17 +9794,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8840,17 +9824,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8867,17 +9854,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -8894,17 +9884,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8921,17 +9914,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8948,17 +9944,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -8975,17 +9974,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9002,17 +10004,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9029,17 +10034,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9056,17 +10064,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9083,17 +10094,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -9110,17 +10124,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9137,17 +10154,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9164,17 +10184,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9191,17 +10214,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9218,17 +10244,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9245,17 +10274,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9272,17 +10304,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9299,17 +10334,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -9326,17 +10364,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9353,17 +10394,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9380,17 +10424,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9407,17 +10454,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9434,17 +10484,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9461,17 +10514,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9488,17 +10544,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9515,17 +10574,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -9542,17 +10604,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9569,17 +10634,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9596,17 +10664,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9623,17 +10694,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9650,17 +10724,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9677,17 +10754,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9704,17 +10784,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9731,17 +10814,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -9758,17 +10844,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9785,17 +10874,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9812,17 +10904,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9839,17 +10934,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9866,17 +10964,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9893,17 +10994,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9920,17 +11024,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -9947,17 +11054,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -9974,17 +11084,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10001,17 +11114,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10028,17 +11144,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10055,17 +11174,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10082,17 +11204,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10109,17 +11234,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10136,17 +11264,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10163,17 +11294,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10190,17 +11324,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10217,17 +11354,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10244,17 +11384,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10271,17 +11414,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10298,17 +11444,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10325,17 +11474,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10352,17 +11504,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10379,17 +11534,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10406,17 +11564,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10433,17 +11594,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10460,17 +11624,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10487,17 +11654,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10514,17 +11684,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10541,17 +11714,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10568,17 +11744,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10595,17 +11774,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10622,17 +11804,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10649,17 +11834,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10676,17 +11864,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10703,17 +11894,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10730,17 +11924,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10757,17 +11954,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10784,17 +11984,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10811,17 +12014,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -10838,17 +12044,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10865,17 +12074,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10892,17 +12104,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10919,17 +12134,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10946,17 +12164,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -10973,17 +12194,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11000,17 +12224,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11027,17 +12254,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -11054,17 +12284,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11081,17 +12314,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11108,17 +12344,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11135,17 +12374,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11162,17 +12404,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11189,17 +12434,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11216,17 +12464,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11243,17 +12494,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -11270,17 +12524,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11297,17 +12554,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11324,17 +12584,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11351,17 +12614,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11378,17 +12644,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11405,17 +12674,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11432,17 +12704,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11459,17 +12734,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -11486,17 +12764,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11513,17 +12794,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11540,17 +12824,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11567,17 +12854,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11594,17 +12884,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11621,17 +12914,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11648,17 +12944,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11675,17 +12974,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -11702,17 +13004,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11729,17 +13034,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11756,17 +13064,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11783,17 +13094,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11810,17 +13124,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11837,17 +13154,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11864,17 +13184,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11891,17 +13214,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -11918,17 +13244,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11945,17 +13274,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "B",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11972,17 +13304,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -11999,17 +13334,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "D",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12026,17 +13364,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "E",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12053,17 +13394,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "H",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12080,17 +13424,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "L",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12107,17 +13454,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -12134,17 +13484,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12161,17 +13514,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NZ",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12188,17 +13544,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12215,17 +13574,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NZ",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12242,17 +13604,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12269,17 +13634,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NZ",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12296,17 +13664,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "BC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12323,17 +13694,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12350,17 +13724,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$00",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12377,17 +13754,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "Z",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12404,17 +13784,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12431,17 +13814,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "Z",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12458,17 +13844,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12485,17 +13874,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "Z",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12512,17 +13904,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12539,17 +13934,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12566,17 +13964,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$08",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12593,17 +13994,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12620,17 +14024,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12647,17 +14054,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12674,17 +14084,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12701,17 +14114,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NC",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12728,17 +14144,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "DE",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12755,17 +14174,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12782,17 +14204,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$10",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12809,17 +14234,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12836,17 +14264,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12863,17 +14294,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12890,17 +14324,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12917,17 +14354,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12944,17 +14384,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12971,17 +14414,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -12998,17 +14444,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$18",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13025,17 +14474,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a8",
                 bytes: 1,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -13052,17 +14504,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13079,17 +14534,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -13106,17 +14564,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13133,17 +14594,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13160,17 +14624,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13187,17 +14654,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13214,17 +14684,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$20",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13241,17 +14714,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13268,17 +14744,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13295,17 +14774,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -13322,17 +14804,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13349,17 +14834,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13376,17 +14864,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13403,17 +14894,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13430,17 +14924,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$28",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13457,17 +14954,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a8",
                 bytes: 1,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -13484,17 +14984,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "AF",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13511,17 +15014,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "C",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -13538,17 +15044,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13565,17 +15074,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13592,17 +15104,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "AF",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13619,17 +15134,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13646,17 +15164,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$30",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13673,17 +15194,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "e8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13700,17 +15224,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "SP",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "HL",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13727,17 +15254,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "a16",
                 bytes: 2,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: false,
         flags: Flags {
@@ -13754,17 +15284,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13781,17 +15314,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13808,17 +15344,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13835,17 +15374,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "A",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "n8",
                 bytes: 1,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {
@@ -13862,17 +15404,20 @@ pub static CB_PREFIXED_OPCODES: &[(u8, Opcode)] = &[
             Operand {
                 name: "$38",
                 bytes: 0,
-                immediate: true
+                immediate: true,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             },
             Operand {
                 name: "NULL",
                 bytes: 0,
-                immediate: false
+                immediate: false,
+                value: 0
             }],
         immediate: true,
         flags: Flags {

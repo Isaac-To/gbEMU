@@ -49,7 +49,7 @@ pub struct ROM {
 pub trait ROMAccess {
     fn new(location: &str) -> Self;
     fn get_metadata(&self) -> ROMMetadata;
-    fn decode(&mut self, addr: usize) -> Opcode;
+    fn decode(&mut self, addr: usize) -> (usize, Opcode);
 }
 
 /// Implement ROMAccess for ROM
@@ -60,10 +60,10 @@ impl ROMAccess for ROM {
     /// Global checksum is not checked
     /// Documented at: https://gbdev.gg8.se/wiki/articles/The_Cartridge_Header#014D_-_Header_Checksum
     fn new(location: &str) -> Self {
-        let data = fs::read(location).unwrap();
+        let data = fs::read(location).expect(&format!("ERROR: Could not find rom at {}", location));
         let metadata = ROMMetadata {
             // ASCII is valid utf8
-            title: String::from_utf8(data[0x134..0x143].to_vec()).unwrap(),
+            title: String::from_utf8(data[0x134..0x143].to_vec()).expect(&format!("ERROR: Could not read title")),
             cgb: data[0x143],
             new_licensee_code: data[0x144],
             sgb: data[0x146],
@@ -95,10 +95,41 @@ impl ROMAccess for ROM {
         self.metadata.clone()
     }
 
-    fn decode(&mut self, addr: usize) -> Opcode {
-        // Decode the ROM
-        let opcode = self.data.get(addr as usize).unwrap();
-        // Look up the opcode from opcodes.rs
-        return opcode_get(opcode);
+    /// Decodes the instruction at address and returns end of address and the decoded instruction
+    /// If used for linear progression through a program, it is expected that the caller function updates it's own address counter with the one outputted by this function
+    /// Example for reading the instructions between 180 and 190:
+    /// ```rust
+    /// let mut addr = 0x180 as usize;
+    /// while addr < 0x190 {
+    ///    let (n_addr, opcode) = rom.decode(addr);
+    ///    println!("{:x}\t {}", addr, opcode);
+    ///    addr = n_addr;
+    /// }
+    /// ```
+    fn decode(&mut self, addr: usize) -> (usize, Opcode) {
+        let mut addr = addr; // Create a local copy for returning
+        let mut opcode = self.data.get(addr).expect(&format!("ERROR: Address: 0x{:x} not in ROM", addr));
+        let mut instruction = unprefixed_opcode_get(opcode);
+        addr += 1; // Acknowledge reading of instruction
+        // SPECIAL CASE: 0xCB (CB Prefix) -> Lookup and execute following instruction from CB prefixed
+        if *opcode == 0xCB {
+            opcode = self.data.get(addr).expect(&format!("ERROR: Address: 0x{:x} not in ROM", addr));
+            instruction = cb_prefixed_opcode_get(opcode);
+            addr += 1; // Acknowledge reading of CB instruction
+        }
+        // Patch in immediate values by reading following addresses from the ROM
+        for i in 0..instruction.operands.len() {
+            if instruction.operands[i].bytes != 0 {
+                let bytes_vector = self.data[addr..addr + instruction.operands[i].bytes as usize].to_vec();
+                // To allow for larger than 8 bit immediates (is formatted as 8 bit chunks and reconstructed for storage in u16), applies a big-endian concat
+                let mut sum = 0 as u16;
+                for bytes in bytes_vector.into_iter().rev() {
+                    sum = sum << 8 | bytes as u16;
+                }
+                instruction.operands[i].value = sum;
+                addr += instruction.operands[i].bytes as usize // Acknowledge reading of following bytes
+            } // ELSE skip as it's not an immediate
+        }
+        return (addr, instruction) // Address should be updated in caller to prevent double execution of instructions
     }
 }

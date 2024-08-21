@@ -6,7 +6,7 @@ import json
 def write_to_rust_file(f, key, type):
     operands = type[key].get("operands")
     while len(operands) < 3:
-        operands.append({"name": "NULL", "bytes": 0, "immediate": False})
+        operands.append({"name": "NULL", "bytes": 0, "immediate": False, "value": 0})
     cycles = type[key]["cycles"]
     while len(cycles) < 2:
         cycles.append(0)
@@ -16,7 +16,8 @@ def write_to_rust_file(f, key, type):
             Operand {{
                 name: "{operand["name"]}",
                 bytes: {int(0 if operand.get("bytes") is None else operand.get("bytes"))},
-                immediate: {str(operand["immediate"]).lower()}
+                immediate: {str(operand["immediate"]).lower()},
+                value: 0
             }}""" for operand in operands
     ])
     }],'''
@@ -54,6 +55,7 @@ pub struct Operand {
     pub name: &'static str,
     pub bytes: u8,
     pub immediate: bool,
+    pub value: u16,
 }
 
 #[derive(Clone, Debug)]
@@ -90,7 +92,15 @@ impl std::fmt::Display for Opcode {
             if operand.name == "NULL" {
                 break;
             }
-            output.push_str(&format!("{} ", operand.name));
+            if operand.bytes != 0 {
+                if operand.immediate == true {
+                    output.push_str(&format!("{} ", format!("0x{:x}", operand.value)));
+                } else {
+                    output.push_str(&format!("{} ", format!("(0x{:x})", operand.value)));
+                }
+            } else {
+                output.push_str(&format!("{} ", operand.name));
+            }
         }
         write!(f, "{}", output)
     }
