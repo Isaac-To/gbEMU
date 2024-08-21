@@ -56,7 +56,11 @@ impl std::fmt::Display for Opcode {
                     output.push_str(&format!("{} ", format!("(0x{:x})", operand.value)));
                 }
             } else {
-                output.push_str(&format!("{} ", operand.name));
+                if operand.immediate == true {
+                    output.push_str(&format!("{} ", format!("{}", operand.name)));
+                } else {
+                    output.push_str(&format!("{} ", format!("({})", operand.name)));
+                }
             }
         }
         write!(f, "{}", output)
