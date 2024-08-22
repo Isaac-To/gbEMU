@@ -21,6 +21,21 @@ def write_to_rust_file(f, key, type):
             }}""" for operand in operands
     ])
     }],'''
+    isa_name = f"ISA::{type[key]["mnemonic"].lower()}"
+    for operand in operands:
+        opname = ""
+        if operand["name"] == "NULL":
+            break
+        if operand["name"] in ["AF", "BC", "DE", "PC"]:
+            opname = "r16"
+        elif operand["name"] in ["A", "B", "C", "D", "E", "H", "L", "F"]:
+            opname = "r8"
+        else:
+            opname = operand['name'].lower()
+        if operand["immediate"]:
+            isa_name += f"_{opname}"
+        else:
+            isa_name += f"_a{opname}"
     f.write(f'''({key}, Opcode {{
         mnemonic: "{type[key]["mnemonic"]}",
         cycles: {type[key]["cycles"]},{op}
@@ -30,7 +45,8 @@ def write_to_rust_file(f, key, type):
             n: "{type[key]["flags"]["N"]}",
             h: "{type[key]["flags"]["H"]}",
             c: "{type[key]["flags"]["C"]}",
-        }}
+        }},
+        isa_call: {isa_name}
     }}),
     ''')
 
@@ -41,13 +57,17 @@ if __name__ == "__main__":
     f = open("src/hardware/cpu/opcodes.rs", "w")
     unprefixed = data["unprefixed"]
     cbprefixed = data["cbprefixed"]
-    f.write("""#[derive(Clone, Debug)]
+    f.write("""use super::isa::ISA;
+use super::super::System;
+
+#[derive(Clone, Debug)]
 pub struct Opcode {
     pub mnemonic: &'static str,
     pub cycles: [u8; 2],
     pub operands: [Operand; 3],
     pub immediate: bool,
     pub flags: Flags,
+    pub isa_call: for<'a> fn(&'a mut System, args: Vec<u16>)
 }
 
 #[derive(Clone, Debug)]
