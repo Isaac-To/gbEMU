@@ -1,10 +1,11 @@
-
 /// Operations are listed here: https://gbdev.io/pandocs/CPU_Instruction_Set.html
 /// Individually explained here: https://rgbds.gbdev.io/docs/v0.8.0/gbz80.7
-
 use crate::hardware::{
+    cpu::{
+        opcodes::Operand,
+        reg::{Flag, Reg16b, Reg8b, RegisterAccess},
+    },
     mem::MemoryAccess,
-    cpu::reg::{RegisterAccess, Reg16b, Reg8b, Flag},
     System,
 };
 
@@ -144,7 +145,7 @@ pub trait ISA {
 
 impl ISA for System {
     /// A helper function to get the value of a flag
-    /// 
+    ///
     /// Intended for use in conditional instructions
     fn _condition(&self, flag: Flag) -> bool {
         let flags = self.cpu.reg_get_flags();
@@ -255,7 +256,8 @@ impl ISA for System {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let result = a & val;
         self.cpu.reg_set_8(&Reg8b::A, result);
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 1, 0));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 1, 0));
     }
     /// Logical AND with A from 8-bit register
     fn and_a_r8(&mut self, reg: &Reg8b) {
@@ -302,7 +304,8 @@ impl ISA for System {
     /// Complement Carry Flag
     fn ccf(&mut self) {
         let flags = self.cpu.reg_get_flags();
-        self.cpu.reg_set_flags((flags.0, 0, 0, if flags.3 == 0 { 1 } else { 0 }));
+        self.cpu
+            .reg_set_flags((flags.0, 0, 0, if flags.3 == 0 { 1 } else { 0 }));
     }
     /// Helper function for CP A - Compare A
     fn _cp_a(&mut self, val: u8) {
@@ -332,7 +335,8 @@ impl ISA for System {
     fn cpl(&mut self) {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         self.cpu.reg_set_8(&Reg8b::A, !a);
-        self.cpu.reg_set_flags((self.cpu.reg_get_flags().0, 1, 1, self.cpu.reg_get_flags().3));
+        self.cpu
+            .reg_set_flags((self.cpu.reg_get_flags().0, 1, 1, self.cpu.reg_get_flags().3));
     }
     /// Decimal Adjust A
     fn daa(&mut self) {
@@ -470,7 +474,8 @@ impl ISA for System {
     }
     /// Jump to address in HL
     fn jp_hl(&mut self) {
-        self.cpu.reg_set_16(&Reg16b::PC, self.cpu.reg_get_16(&Reg16b::HL));
+        self.cpu
+            .reg_set_16(&Reg16b::PC, self.cpu.reg_get_16(&Reg16b::HL));
     }
     /// Jump Relative
     fn jr_n16(&mut self) {
@@ -506,7 +511,8 @@ impl ISA for System {
     }
     /// Load memory address in HL to 8-bit register
     fn ld_r8_ahl(&mut self, reg: &Reg8b) {
-        self.cpu.reg_set_8(reg, self.mem_read_8(self.cpu.reg_get_16(&Reg16b::HL)));
+        self.cpu
+            .reg_set_8(reg, self.mem_read_8(self.cpu.reg_get_16(&Reg16b::HL)));
     }
     /// Load register A to memory address in 16-bit register
     fn ld_ar16_a(&mut self, reg: &Reg16b) {
@@ -529,7 +535,8 @@ impl ISA for System {
     }
     /// Load memory address in 16-bit register to register A
     fn ld_a_ar16(&mut self, reg: &Reg16b) {
-        self.cpu.reg_set_8(&Reg8b::A, self.mem_read_8(self.cpu.reg_get_16(reg)));
+        self.cpu
+            .reg_set_8(&Reg8b::A, self.mem_read_8(self.cpu.reg_get_16(reg)));
     }
     /// Load memory address in 16-bit immediate value to register A
     fn ld_a_an16(&mut self, addr: u16) {
@@ -602,7 +609,8 @@ impl ISA for System {
     }
     /// Load HL to SP
     fn ld_sp_hl(&mut self) {
-        self.cpu.reg_set_16(&Reg16b::SP, self.cpu.reg_get_16(&Reg16b::HL));
+        self.cpu
+            .reg_set_16(&Reg16b::SP, self.cpu.reg_get_16(&Reg16b::HL));
     }
     /// No Operation
     fn nop(&mut self) {}
@@ -611,7 +619,8 @@ impl ISA for System {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let result = a | val;
         self.cpu.reg_set_8(&Reg8b::A, result);
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, 0));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, 0));
     }
     /// Logical OR with A from 8-bit register
     fn or_a_r8(&mut self, reg: &Reg8b) {
@@ -677,7 +686,8 @@ impl ISA for System {
         let flags = self.cpu.reg_get_flags();
         let carry = (val & 0x80) >> 7;
         let result = (val << 1) | flags.3;
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
         result
     }
     /// Rotate left 8-bit register through Carry Flag
@@ -702,7 +712,8 @@ impl ISA for System {
     fn _rlc(&mut self, val: u8) -> u8 {
         let carry = (val & 0x80) >> 7;
         let result = (val << 1) | carry;
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
         result
     }
     /// Rotate 8-bit register left circular
@@ -726,7 +737,8 @@ impl ISA for System {
         let flags = self.cpu.reg_get_flags();
         let carry = val & 1;
         let result = (val >> 1) | (flags.3 << 7);
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
         result
     }
     /// Rotate 8-bit register right through Carry Flag
@@ -751,7 +763,8 @@ impl ISA for System {
     fn _rrc(&mut self, val: u8) -> u8 {
         let carry = val & 1;
         let result = (val >> 1) | (carry << 7);
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
         result
     }
     /// Rotate 8-bit register right circular
@@ -826,7 +839,8 @@ impl ISA for System {
     fn _sla(&mut self, val: u8) -> u8 {
         let carry = (val & 0x80) >> 7;
         let result = val << 1;
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
         result
     }
     /// Shift Left Arithmetic 8-bit register
@@ -844,7 +858,8 @@ impl ISA for System {
     fn _sra(&mut self, val: u8) -> u8 {
         let carry = val & 1;
         let result = (val >> 1) | (val & 0x80);
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
         result
     }
     /// Shift Right Arithmetic 8-bit register
@@ -862,7 +877,8 @@ impl ISA for System {
     fn _srl(&mut self, val: u8) -> u8 {
         let carry = val & 1;
         let result = val >> 1;
-        self.cpu.reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
+        self.cpu
+            .reg_set_flags((if result == 0 { 1 } else { 0 }, 0, 0, carry));
         result
     }
     /// Shift Right Logical 8-bit register

@@ -57,7 +57,10 @@ if __name__ == "__main__":
     f = open("src/hardware/cpu/opcodes.rs", "w")
     unprefixed = data["unprefixed"]
     cbprefixed = data["cbprefixed"]
-    f.write("""use super::isa::ISA;
+    f.write("""use super::{
+        isa::ISA,
+        reg::{Reg8b, Reg16b}
+    };
 use super::super::System;
 
 #[derive(Clone, Debug)]
@@ -67,7 +70,7 @@ pub struct Opcode {
     pub operands: [Operand; 3],
     pub immediate: bool,
     pub flags: Flags,
-    pub isa_call: for<'a> fn(&'a mut System, args: Vec<u16>)
+    pub isa_call: for<'a> fn(&'a mut System, args: Vec<Operand>)
 }
 
 #[derive(Clone, Debug)]
@@ -127,6 +130,83 @@ impl std::fmt::Display for Opcode {
             }
         }
         write!(f, "{}", output)
+    }
+}
+
+trait OperandTypeConversions {
+    fn to_reg8b(&self) -> Reg8b;
+    fn to_reg16b(&self) -> Reg16b;
+    fn to_n8(&self) -> u8;
+    fn to_n16(&self) -> u16;
+    fn to_e8(&self) -> i8;
+    fn to_e16(&self) -> i16;
+}
+
+impl OperandTypeConversions for Operand {
+    /// Helper functions
+
+    /// Converts an operand to a Reg8b
+    fn to_reg8b(&self) -> Reg8b {
+        match self.name {
+            "A" => Reg8b::A,
+            "B" => Reg8b::B,
+            "C" => Reg8b::C,
+            "D" => Reg8b::D,
+            "E" => Reg8b::E,
+            "H" => Reg8b::H,
+            "L" => Reg8b::L,
+            "F" => Reg8b::F,
+            "S" => Reg8b::S,
+            "P" => Reg8b::P,
+            "P2" => Reg8b::P2,
+            "C2" => Reg8b::C2,
+            _ => panic!("Invalid operand"),
+        }
+    }
+
+    /// Converts an operand to a Reg16b
+    fn to_reg16b(&self) -> Reg16b {
+        match self.name {
+            "AF" => Reg16b::AF,
+            "BC" => Reg16b::BC,
+            "DE" => Reg16b::DE,
+            "HL" => Reg16b::HL,
+            "SP" => Reg16b::SP,
+            "PC" => Reg16b::PC,
+            _ => panic!("Invalid operand"),
+        }
+    }
+
+    /// Converts an operand to an u8
+    fn to_n8(&self) -> u8 {
+        match self.name {
+            "n8" => self.value as u8,
+            _ => panic!("Invalid operand"),
+        }
+    }
+
+    /// Converts an operand to an u16
+    fn to_n16(&self) -> u16 {
+        match self.name {
+            "n16" => self.value,
+            _ => panic!("Invalid operand"),
+        }
+    }
+
+    /// Converts an operand to an i8
+    fn to_e8(&self) -> i8 {
+        match self.name {
+            "e8" => self.value as i8,
+            _ => panic!("Invalid operand"),
+        }
+    }
+
+    /// Converts an operand to an i16
+    fn to_e16(&self) -> i16 {
+        match self.name {
+            "e16" => self.value as i16,
+            _ => panic!("Invalid operand"),
+        }
     }
 }
 
