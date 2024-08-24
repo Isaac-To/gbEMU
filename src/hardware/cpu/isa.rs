@@ -2,7 +2,7 @@
 /// Individually explained here: https://rgbds.gbdev.io/docs/v0.8.0/gbz80.7
 use crate::hardware::{
     cpu::{
-        opcodes::Operand,
+        opcodes::{Operand, OperandTypeConversions},
         reg::{Flag, Reg16b, Reg8b, RegisterAccess},
     },
     mem::MemoryAccess,
@@ -147,17 +147,12 @@ impl ISA for System {
     /// A helper function to get the value of a flag
     ///
     /// Intended for use in conditional instructions
-    fn _condition(&self, args: Vec<Operand>) -> bool {
-        let flags = self.cpu.reg_get_flags();
-        match flags {
-            Flag::Zero => flags.0 == 1,
-            Flag::Subtract => flags.1 == 1,
-            Flag::HalfCarry => flags.2 == 1,
-            Flag::Carry => flags.3 == 1,
-        }
+    fn _condition(&self, flag: Flag) -> bool {
+        // TBD
+        panic!("Not implemented");
     }
     /// Helper function for ADC A - Add with Carry to A
-    fn _adc_a(&mut self, args: Vec<Operand>) {
+    fn _adc_a(&mut self, val: u8) {
         let flags = self.cpu.reg_get_flags();
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let (result, carry) = a.overflowing_add(val);
@@ -173,7 +168,7 @@ impl ISA for System {
     }
     /// Add with Carry to A from 8-bit register
     fn adc_a_r8(&mut self, args: Vec<Operand>) {
-        let reg  = args[0].get_reg8();
+        let reg = args[0].to_reg8b();
         self._adc_a(self.cpu.reg_get_8(reg));
     }
     /// Add with Carry to A from memory address in HL
@@ -182,11 +177,11 @@ impl ISA for System {
     }
     /// Add with Carry to A from 8-bit immediate value
     fn adc_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].get_n8();
+        let val = args[0].to_n8();
         self._adc_a(val);
     }
     /// Helper function for ADD A - Add to A
-    fn _add_a(&mut self, args: Vec<Operand>) {
+    fn _add_a(&mut self, val: u8) {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let (result, carry) = a.overflowing_add(val);
         let half_carry = (a & 0xF) + (val & 0xF) > 0xF;
@@ -200,7 +195,7 @@ impl ISA for System {
     }
     /// Add to A from 8-bit register
     fn add_a_r8(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg8();
+        let reg = args[0].to_reg8b();
         self._add_a(self.cpu.reg_get_8(reg));
     }
     /// Add to A from memory address in HL
@@ -209,11 +204,11 @@ impl ISA for System {
     }
     /// Add to A from 8-bit immediate value
     fn add_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].get_n8();
+        let val = args[0].to_n8();
         self._add_a(val);
     }
     // Helper function for ADD HL - Add to HL
-    fn _add_hl(&mut self, args: Vec<Operand>) {
+    fn _add_hl(&mut self, val: u16) {
         let hl = self.cpu.reg_get_16(&Reg16b::HL);
         let (result, carry) = hl.overflowing_add(val);
         let half_carry = (hl & 0xFFF) + (val & 0xFFF) > 0xFFF;
@@ -227,7 +222,7 @@ impl ISA for System {
     }
     /// Add to HL from 16-bit register
     fn add_hl_r16(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg16();
+        let reg = args[0].to_reg16b();
         self._add_hl(self.cpu.reg_get_16(reg));
     }
     /// Add to HL from SP
@@ -237,7 +232,7 @@ impl ISA for System {
     /// Add to SP with signed 8-bit immediate value
     fn add_sp_e8(&mut self, args: Vec<Operand>) {
         let sp = self.cpu.reg_get_16(&Reg16b::SP);
-        let e8 = args[0].get_e8();
+        let e8 = args[0].to_e8() as i16;
         let result = sp.wrapping_add_signed(e8);
         let flags = (
             0,
@@ -257,7 +252,7 @@ impl ISA for System {
         self.cpu.reg_set_flags(flags);
     }
     /// Helper function for AND A - Logical AND with A
-    fn _and_a(&mut self, args: Vec<Operand>) {
+    fn _and_a(&mut self, val: u8) {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let result = a & val;
         self.cpu.reg_set_8(&Reg8b::A, result);
@@ -266,7 +261,7 @@ impl ISA for System {
     }
     /// Logical AND with A from 8-bit register
     fn and_a_r8(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg8();
+        let reg = args[0].to_reg8b();
         self._and_a(self.cpu.reg_get_8(reg));
     }
     /// Logical AND with A from memory address in HL
@@ -275,11 +270,11 @@ impl ISA for System {
     }
     /// Logical AND with A from 8-bit immediate value
     fn and_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].get_n8();
+        let val = args[0].to_n8();
         self._and_a(val);
     }
     /// Helper function for BIT u3 - Test bit
-    fn _bit_u3(&mut self, args: Vec<Operand>) {
+    fn _bit_u3(&mut self, bit: u8, val: u8) {
         let result = val & (1 << bit);
         self.cpu.reg_set_flags((
             if result == 0 { 1 } else { 0 },
@@ -290,7 +285,8 @@ impl ISA for System {
     }
     /// Test bit u3 in 8-bit register
     fn bit_u3_r8(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg8();
+        let bit = args[0].to_n8();
+        let reg = args[1].to_reg8b();
         self._bit_u3(bit, self.cpu.reg_get_8(reg));
     }
     /// Test bit u3 in memory address in HL
@@ -530,11 +526,7 @@ impl ISA for System {
         self.mem_write_8(self.cpu.reg_get_16(&Reg16b::HL), val);
     }
     /// Load memory address in HL to 8-bit register
-<<<<<<< Updated upstream
-    fn ld_r8_ahl(&mut self, reg: &Reg8b) {
-=======
     fn ld_r8_ahl(&mut self, args: Vec<Operand>) {
->>>>>>> Stashed changes
         self.cpu
             .reg_set_8(reg, self.mem_read_8(self.cpu.reg_get_16(&Reg16b::HL)));
     }
@@ -558,11 +550,7 @@ impl ISA for System {
         self.mem_write_8(addr, self.cpu.reg_get_8(&Reg8b::A));
     }
     /// Load memory address in 16-bit register to register A
-<<<<<<< Updated upstream
-    fn ld_a_ar16(&mut self, reg: &Reg16b) {
-=======
     fn ld_a_ar16(&mut self, args: Vec<Operand>) {
->>>>>>> Stashed changes
         self.cpu
             .reg_set_8(&Reg8b::A, self.mem_read_8(self.cpu.reg_get_16(reg)));
     }
@@ -636,11 +624,7 @@ impl ISA for System {
         self.cpu.reg_set_flags(flags);
     }
     /// Load HL to SP
-<<<<<<< Updated upstream
-    fn ld_sp_hl(&mut self) {
-=======
     fn ld_sp_hl(&mut self, args: Vec<Operand>) {
->>>>>>> Stashed changes
         self.cpu
             .reg_set_16(&Reg16b::SP, self.cpu.reg_get_16(&Reg16b::HL));
     }
