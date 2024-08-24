@@ -14,9 +14,6 @@ use crate::hardware::{
 /// * _  - prepending the function name means it is a helper function
 /// * a  - prepending an argument means it is accessing a memory address
 pub trait ISA {
-    fn _xor_a(&mut self, val: u8);
-    fn _swap(&mut self, val: u8) -> u8;
-    fn _rl(&mut self, val: u8) -> u8;
     fn _adc_a(&mut self, val: u8);
     fn _add_a(&mut self, val: u8);
     fn _add_hl(&mut self, val: u16);
@@ -25,10 +22,13 @@ pub trait ISA {
     fn _condition(&self, flag: Flag) -> bool;
     fn _cp_a(&mut self, val: u8);
     fn _or_a(&mut self, val: u8);
+    fn _rl(&mut self, val: u8) -> u8;
     fn _rlc(&mut self, val: u8) -> u8;
     fn _rr(&mut self, val: u8) -> u8;
     fn _rrc(&mut self, val: u8) -> u8;
     fn _sbc_a(&mut self, val: u8);
+    fn _set_u3(&mut self, val: u8, bit: u8) -> u8;
+    fn _sla(&mut self, val: u8) -> u8;
     fn _sra(&mut self, val: u8) -> u8;
     fn _srl(&mut self, val: u8) -> u8;
     fn _sub_a(&mut self, val: u8);
@@ -173,6 +173,7 @@ impl ISA for System {
     }
     /// Add with Carry to A from 8-bit register
     fn adc_a_r8(&mut self, args: Vec<Operand>) {
+        let reg  = args[0].get_reg8();
         self._adc_a(self.cpu.reg_get_8(reg));
     }
     /// Add with Carry to A from memory address in HL
@@ -181,6 +182,7 @@ impl ISA for System {
     }
     /// Add with Carry to A from 8-bit immediate value
     fn adc_a_n8(&mut self, args: Vec<Operand>) {
+        let val = args[0].get_n8();
         self._adc_a(val);
     }
     /// Helper function for ADD A - Add to A
@@ -198,6 +200,7 @@ impl ISA for System {
     }
     /// Add to A from 8-bit register
     fn add_a_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].get_reg8();
         self._add_a(self.cpu.reg_get_8(reg));
     }
     /// Add to A from memory address in HL
@@ -206,6 +209,7 @@ impl ISA for System {
     }
     /// Add to A from 8-bit immediate value
     fn add_a_n8(&mut self, args: Vec<Operand>) {
+        let val = args[0].get_n8();
         self._add_a(val);
     }
     // Helper function for ADD HL - Add to HL
@@ -223,6 +227,7 @@ impl ISA for System {
     }
     /// Add to HL from 16-bit register
     fn add_hl_r16(&mut self, args: Vec<Operand>) {
+        let reg = args[0].get_reg16();
         self._add_hl(self.cpu.reg_get_16(reg));
     }
     /// Add to HL from SP
@@ -232,7 +237,7 @@ impl ISA for System {
     /// Add to SP with signed 8-bit immediate value
     fn add_sp_e8(&mut self, args: Vec<Operand>) {
         let sp = self.cpu.reg_get_16(&Reg16b::SP);
-        let e8 = self.mem_pc_read_8() as i8 as i16;
+        let e8 = args[0].get_e8();
         let result = sp.wrapping_add_signed(e8);
         let flags = (
             0,
@@ -261,6 +266,7 @@ impl ISA for System {
     }
     /// Logical AND with A from 8-bit register
     fn and_a_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].get_reg8();
         self._and_a(self.cpu.reg_get_8(reg));
     }
     /// Logical AND with A from memory address in HL
@@ -269,6 +275,7 @@ impl ISA for System {
     }
     /// Logical AND with A from 8-bit immediate value
     fn and_a_n8(&mut self, args: Vec<Operand>) {
+        let val = args[0].get_n8();
         self._and_a(val);
     }
     /// Helper function for BIT u3 - Test bit
