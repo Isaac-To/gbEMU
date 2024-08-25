@@ -177,7 +177,7 @@ impl ISA for System {
     }
     /// Add with Carry to A from 8-bit immediate value
     fn adc_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].to_u8();
         self._adc_a(val);
     }
     /// Helper function for ADD A - Add to A
@@ -204,7 +204,7 @@ impl ISA for System {
     }
     /// Add to A from 8-bit immediate value
     fn add_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].to_u8();
         self._add_a(val);
     }
     // Helper function for ADD HL - Add to HL
@@ -232,7 +232,7 @@ impl ISA for System {
     /// Add to SP with signed 8-bit immediate value
     fn add_sp_e8(&mut self, args: Vec<Operand>) {
         let sp = self.cpu.reg_get_16(&Reg16b::SP);
-        let e8 = args[0].to_e8() as i16;
+        let e8 = args[0].to_i8() as i16;
         let result = sp.wrapping_add_signed(e8);
         let flags = (
             0,
@@ -270,7 +270,7 @@ impl ISA for System {
     }
     /// Logical AND with A from 8-bit immediate value
     fn and_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].to_u8();
         self._and_a(val);
     }
     /// Helper function for BIT u3 - Test bit
@@ -285,27 +285,27 @@ impl ISA for System {
     }
     /// Test bit u3 in 8-bit register
     fn bit_u3_r8(&mut self, args: Vec<Operand>) {
-        let bit = args[0].to_n8();
+        let bit = args[0].to_u8();
         let reg = args[1].to_reg8b();
         self._bit_u3(bit, self.cpu.reg_get_8(reg));
     }
     /// Test bit u3 in memory address in HL
     fn bit_u3_ahl(&mut self, args: Vec<Operand>) {
-        let bit = args[0].to_n8();
+        let bit = args[0].to_u8();
         self._bit_u3(bit, self.mem_read_8(self.cpu.reg_get_16(&Reg16b::HL)));
     }
     /// Place address of next instruction on stack and jump to address
     fn call_n16(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_n16();
+        let addr = args[0].to_u16();
         let pc = self.cpu.reg_get_16(&Reg16b::PC);
         self.mem_stack_push_16(pc);
         self.cpu.reg_set_16(&Reg16b::PC, addr);
     }
     /// Conditional CALL
     fn call_cc_n16(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_n16();
+        let addr = args[0].to_u16();
         if self._condition(flag) {
-            let addr = args[0].to_n16();
+            let addr = args[0].to_u16();
             let pc = self.cpu.reg_get_16(&Reg16b::PC);
             self.mem_stack_push_16(pc);
             self.cpu.reg_set_16(&Reg16b::PC, addr);
@@ -340,7 +340,7 @@ impl ISA for System {
     }
     /// Compare A with 8-bit immediate value
     fn cp_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].to_u8();
         self._cp_a(val);
     }
     /// Complement A
@@ -480,13 +480,13 @@ impl ISA for System {
     }
     /// Jump
     fn jp_n16(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_n16();
+        let addr = args[0].to_u16();
         self.cpu.reg_set_16(&Reg16b::PC, addr);
     }
     /// Conditional Jump
     fn jp_cc_n16(&mut self, args: Vec<Operand>) {
         if self._condition(flag) {
-            let addr = args[0].to_n16();
+            let addr = args[0].to_u16();
             self.cpu.reg_set_16(&Reg16b::PC, addr);
         }
     }
@@ -497,14 +497,14 @@ impl ISA for System {
     }
     /// Jump Relative
     fn jr_n16(&mut self, args: Vec<Operand>) {
-        let e8 = args[0].to_e8() as i16;
+        let e8 = args[0].to_i8() as i16;
         let pc = self.cpu.reg_get_16(&Reg16b::PC);
         self.cpu.reg_set_16(&Reg16b::PC, pc.wrapping_add_signed(e8));
     }
     /// Conditional Jump Relative
     fn jr_cc_n16(&mut self, args: Vec<Operand>) {
         if self._condition(flag) {
-            let e8 = args[0].to_e8() as i16;
+            let e8 = args[0].to_i8() as i16;
             let pc = self.cpu.reg_get_16(&Reg16b::PC);
             self.cpu.reg_set_16(&Reg16b::PC, pc.wrapping_add_signed(e8));
         }
@@ -518,13 +518,13 @@ impl ISA for System {
     /// Load immediate 8-bit value to 8-bit register
     fn ld_r8_n8(&mut self, args: Vec<Operand>) {
         let dest = args[0].to_reg8b();
-        let val = args[1].to_n8();
+        let val = args[1].to_u8();
         self.cpu.reg_set_8(dest, val);
     }
     /// Load immediate 16-bit value to 16-bit register
     fn ld_r16_n16(&mut self, args: Vec<Operand>) {
         let dest = args[0].to_reg16b();
-        let val = args[1].to_n16();
+        let val = args[1].to_u16();
         self.cpu.reg_set_16(dest, val);
     }
     /// Load 8-bit register to memory address in HL
@@ -534,7 +534,7 @@ impl ISA for System {
     }
     /// Load 8-bit immediate value to memory address in HL
     fn ld_ahl_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].to_u8();
         self.mem_write_8(self.cpu.reg_get_16(&Reg16b::HL), val);
     }
     /// Load memory address in HL to 8-bit register
@@ -550,12 +550,12 @@ impl ISA for System {
     }
     /// Load register A to memory address in 16-bit immediate value
     fn ld_an16_a(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_n16();
+        let addr = args[0].to_u16();
         self.mem_write_8(addr, self.cpu.reg_get_8(&Reg8b::A));
     }
     /// Load register A to memory address in 16-bit immediate value (High RAM)
     fn ldh_an16_a(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_n16();
+        let addr = args[0].to_u16();
         if 0xFF00 < addr && addr < 0xFFFF {
             self.mem_write_8(addr, self.cpu.reg_get_8(&Reg8b::A));
         }
@@ -573,12 +573,12 @@ impl ISA for System {
     }
     /// Load memory address in 16-bit immediate value to register A
     fn ld_a_an16(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_n16();
+        let addr = args[0].to_u16();
         self.cpu.reg_set_8(&Reg8b::A, self.mem_read_8(addr));
     }
     /// Load memory address in 16-bit immediate value to register A (High RAM)
     fn ldh_a_an16(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_n16();
+        let addr = args[0].to_u16();
         if 0xFF00 < addr && addr < 0xFFFF {
             self.cpu.reg_set_8(&Reg8b::A, self.mem_read_8(addr));
         }
@@ -614,12 +614,12 @@ impl ISA for System {
     }
     /// Load 16-bit immediate value to SP
     fn ld_sp_n16(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n16();
+        let val = args[0].to_u16();
         self.cpu.reg_set_16(&Reg16b::SP, val);
     }
     /// Load register SP to memory address in 16-bit immediate value
     fn ld_an16_sp(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_n16();
+        let addr = args[0].to_u16();
         self.mem_write_16(addr, self.cpu.reg_get_16(&Reg16b::SP));
     }
     /// Load register SP with added signed 8-bit immediate value to HL
@@ -670,7 +670,7 @@ impl ISA for System {
     }
     /// Logical OR with A from 8-bit immediate value
     fn or_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].to_u8();
         self._or_a(val);
     }
     /// Pop 16-bit value from stack to register AF
@@ -697,14 +697,14 @@ impl ISA for System {
     }
     /// Reset bit u3 in 8-bit register
     fn res_u3_r8(&mut self, args: Vec<Operand>) {
-        let bit = args[0].to_n8();
+        let bit = args[0].to_u8();
         let reg = args[1].to_reg8b();
         let val = self.cpu.reg_get_8(reg) & !(1 << bit);
         self.cpu.reg_set_8(reg, val);
     }
     /// Reset bit u3 in memory address in HL
     fn res_u3_ahl(&mut self, args: Vec<Operand>) {
-        let bit = args[0].to_n8();
+        let bit = args[0].to_u8();
         let val = self.mem_read_8(self.cpu.reg_get_16(&Reg16b::HL)) & !(1 << bit);
         self.mem_write_8(self.cpu.reg_get_16(&Reg16b::HL), val);
     }
@@ -864,7 +864,7 @@ impl ISA for System {
     }
     /// Subtract with Carry from A with 8-bit immediate value
     fn sbc_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].to_u8();
         self._sbc_a(val);
     }
     /// Set Carry Flag
@@ -879,13 +879,13 @@ impl ISA for System {
     /// Set bit u3 in 8-bit register
     fn set_u3_r8(&mut self, args: Vec<Operand>) {
         let reg = args[0].to_reg8b();
-        let bit = args[1].to_n8();
+        let bit = args[1].to_u8();
         let val = self._set_u3(self.cpu.reg_get_8(reg), bit);
         self.cpu.reg_set_8(reg, val);
     }
     /// Set bit u3 in memory address in HL
     fn set_u3_ahl(&mut self, args: Vec<Operand>) {
-        let bit = args[0].to_n8();
+        let bit = args[0].to_u8();
         let loc = self.cpu.reg_get_16(&Reg16b::HL);
         let val = self._set_u3(self.mem_read_8(loc), bit);
         self.mem_write_8(loc, val);
@@ -978,7 +978,7 @@ impl ISA for System {
     }
     /// Subtract from A with 8-bit immediate value
     fn sub_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].to_u8();
         self._sub_a(val);
     }
     /// Helper function for SWAP - Swap nibbles
@@ -1019,7 +1019,7 @@ impl ISA for System {
     }
     /// Logical XOR with A from 8-bit immediate value
     fn xor_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].to_n8();
+        let val = args[0].t();
         self._xor_a(val);
     }
 }

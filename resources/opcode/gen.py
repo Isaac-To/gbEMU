@@ -136,10 +136,10 @@ impl std::fmt::Display for Opcode {
 pub trait OperandTypeConversions {
     fn to_reg8b(&self) -> &Reg8b;
     fn to_reg16b(&self) -> &Reg16b;
-    fn to_n8(&self) -> u8;
-    fn to_n16(&self) -> u16;
-    fn to_e8(&self) -> i8;
-    fn to_e16(&self) -> i16;
+    fn to_u8(&self) -> u8;
+    fn to_u16(&self) -> u16;
+    fn to_i8(&self) -> i8;
+    fn to_i16(&self) -> i16;
 }
 
 impl OperandTypeConversions for Operand {
@@ -178,7 +178,7 @@ impl OperandTypeConversions for Operand {
     }
 
     /// Converts an operand to an u8
-    fn to_n8(&self) -> u8 {
+    fn to_u8(&self) -> u8 {
         match self.name {
             "n8" => self.value as u8,
             _ => panic!("Invalid operand"),
@@ -186,7 +186,7 @@ impl OperandTypeConversions for Operand {
     }
 
     /// Converts an operand to an u16
-    fn to_n16(&self) -> u16 {
+    fn to_u16(&self) -> u16 {
         match self.name {
             "n16" => self.value,
             _ => panic!("Invalid operand"),
@@ -194,7 +194,7 @@ impl OperandTypeConversions for Operand {
     }
 
     /// Converts an operand to an i8
-    fn to_e8(&self) -> i8 {
+    fn to_i8(&self) -> i8 {
         match self.name {
             "e8" => self.value as i8,
             _ => panic!("Invalid operand"),
@@ -202,7 +202,7 @@ impl OperandTypeConversions for Operand {
     }
 
     /// Converts an operand to an i16
-    fn to_e16(&self) -> i16 {
+    fn to_i16(&self) -> i16 {
         match self.name {
             "e16" => self.value as i16,
             _ => panic!("Invalid operand"),
