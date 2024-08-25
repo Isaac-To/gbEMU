@@ -291,20 +291,24 @@ impl ISA for System {
     }
     /// Test bit u3 in memory address in HL
     fn bit_u3_ahl(&mut self, args: Vec<Operand>) {
+        let bit = args[0].to_n8();
         self._bit_u3(bit, self.mem_read_8(self.cpu.reg_get_16(&Reg16b::HL)));
     }
     /// Place address of next instruction on stack and jump to address
     fn call_n16(&mut self, args: Vec<Operand>) {
-        let addr = args[0].get_n16();
+        let addr = args[0].to_n16();
         let pc = self.cpu.reg_get_16(&Reg16b::PC);
         self.mem_stack_push_16(pc);
         self.cpu.reg_set_16(&Reg16b::PC, addr);
     }
     /// Conditional CALL
     fn call_cc_n16(&mut self, args: Vec<Operand>) {
-        let addr = args[0].get_n16();
+        let addr = args[0].to_n16();
         if self._condition(flag) {
-            self.call_n16(addr);
+            let addr = args[0].to_n16();
+            let pc = self.cpu.reg_get_16(&Reg16b::PC);
+            self.mem_stack_push_16(pc);
+            self.cpu.reg_set_16(&Reg16b::PC, addr);
         }
     }
     /// Complement Carry Flag
@@ -314,7 +318,7 @@ impl ISA for System {
             .reg_set_flags((flags.0, 0, 0, if flags.3 == 0 { 1 } else { 0 }));
     }
     /// Helper function for CP A - Compare A
-    fn _cp_a(&mut self, args: Vec<Operand>) {
+    fn _cp_a(&mut self, val: u8) {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let result = a.wrapping_sub(val);
         let half_carry = (a & 0xF) < (val & 0xF);
@@ -327,7 +331,7 @@ impl ISA for System {
     }
     /// Compare A with 8-bit register
     fn cp_a_r8(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg8();
+        let reg = args[0].to_reg8b();
         self._cp_a(self.cpu.reg_get_8(reg));
     }
     /// Compare A with memory address in HL
@@ -336,7 +340,7 @@ impl ISA for System {
     }
     /// Compare A with 8-bit immediate value
     fn cp_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].get_n8();
+        let val = args[0].to_n8();
         self._cp_a(val);
     }
     /// Complement A
@@ -373,7 +377,7 @@ impl ISA for System {
     }
     /// Decrement 8-bit register
     fn dec_r8(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg8();
+        let reg = args[0].to_reg8b();
         let val = self.cpu.reg_get_8(reg).wrapping_sub(1);
         let half_carry = (val & 0xF) == 0xF;
         self.cpu.reg_set_8(reg, val);
@@ -400,7 +404,7 @@ impl ISA for System {
     }
     /// Decrement 16-bit register
     fn dec_r16(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg16();
+        let reg = args[0].to_reg16b();
         let val = self.cpu.reg_get_16(reg).wrapping_sub(1);
         self.cpu.reg_set_16(reg, val);
     }
@@ -438,7 +442,7 @@ impl ISA for System {
     }
     /// Increment 8-bit register
     fn inc_r8(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg8();
+        let reg = args[0].to_reg8b();
         let val = self.cpu.reg_get_8(reg).wrapping_add(1);
         let half_carry = (val & 0xF) == 0;
         self.cpu.reg_set_8(reg, val);
@@ -465,7 +469,7 @@ impl ISA for System {
     }
     /// Increment 16-bit register
     fn inc_r16(&mut self, args: Vec<Operand>) {
-        let reg = args[0].get_reg16();
+        let reg = args[0].to_reg16b();
         let val = self.cpu.reg_get_16(reg).wrapping_add(1);
         self.cpu.reg_set_16(reg, val);
     }
@@ -476,13 +480,13 @@ impl ISA for System {
     }
     /// Jump
     fn jp_n16(&mut self, args: Vec<Operand>) {
-        let addr = self.mem_pc_read_16();
+        let addr = args[0].to_n16();
         self.cpu.reg_set_16(&Reg16b::PC, addr);
     }
     /// Conditional Jump
     fn jp_cc_n16(&mut self, args: Vec<Operand>) {
         if self._condition(flag) {
-            let addr = self.mem_pc_read_16();
+            let addr = args[0].to_n16();
             self.cpu.reg_set_16(&Reg16b::PC, addr);
         }
     }
@@ -493,53 +497,65 @@ impl ISA for System {
     }
     /// Jump Relative
     fn jr_n16(&mut self, args: Vec<Operand>) {
-        let e8 = args[0].get_e8();
+        let e8 = args[0].to_e8() as i16;
         let pc = self.cpu.reg_get_16(&Reg16b::PC);
-        self.cpu.reg_set_16(&Reg16b::PC, pc.wrapping_add_signed(s8));
+        self.cpu.reg_set_16(&Reg16b::PC, pc.wrapping_add_signed(e8));
     }
     /// Conditional Jump Relative
     fn jr_cc_n16(&mut self, args: Vec<Operand>) {
         if self._condition(flag) {
-            let e8 = args[0].get_e8();
+            let e8 = args[0].to_e8() as i16;
             let pc = self.cpu.reg_get_16(&Reg16b::PC);
-            self.cpu.reg_set_16(&Reg16b::PC, pc.wrapping_add_signed(s8));
+            self.cpu.reg_set_16(&Reg16b::PC, pc.wrapping_add_signed(e8));
         }
     }
     /// Load 8-bit register to 8-bit register
     fn ld_r8_r8(&mut self, args: Vec<Operand>) {
+        let dest = args[1].to_reg8b();
+        let src = args[0].to_reg8b();
         self.cpu.reg_set_8(dest, self.cpu.reg_get_8(src));
     }
     /// Load immediate 8-bit value to 8-bit register
     fn ld_r8_n8(&mut self, args: Vec<Operand>) {
+        let dest = args[0].to_reg8b();
+        let val = args[1].to_n8();
         self.cpu.reg_set_8(dest, val);
     }
     /// Load immediate 16-bit value to 16-bit register
     fn ld_r16_n16(&mut self, args: Vec<Operand>) {
+        let dest = args[0].to_reg16b();
+        let val = args[1].to_n16();
         self.cpu.reg_set_16(dest, val);
     }
     /// Load 8-bit register to memory address in HL
     fn ld_ahl_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         self.mem_write_8(self.cpu.reg_get_16(&Reg16b::HL), self.cpu.reg_get_8(reg));
     }
     /// Load 8-bit immediate value to memory address in HL
     fn ld_ahl_n8(&mut self, args: Vec<Operand>) {
+        let val = args[0].to_n8();
         self.mem_write_8(self.cpu.reg_get_16(&Reg16b::HL), val);
     }
     /// Load memory address in HL to 8-bit register
     fn ld_r8_ahl(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         self.cpu
             .reg_set_8(reg, self.mem_read_8(self.cpu.reg_get_16(&Reg16b::HL)));
     }
     /// Load register A to memory address in 16-bit register
     fn ld_ar16_a(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg16b();
         self.mem_write_8(self.cpu.reg_get_16(reg), self.cpu.reg_get_8(&Reg8b::A));
     }
     /// Load register A to memory address in 16-bit immediate value
     fn ld_an16_a(&mut self, args: Vec<Operand>) {
+        let addr = args[0].to_n16();
         self.mem_write_8(addr, self.cpu.reg_get_8(&Reg8b::A));
     }
     /// Load register A to memory address in 16-bit immediate value (High RAM)
     fn ldh_an16_a(&mut self, args: Vec<Operand>) {
+        let addr = args[0].to_n16();
         if 0xFF00 < addr && addr < 0xFFFF {
             self.mem_write_8(addr, self.cpu.reg_get_8(&Reg8b::A));
         }
@@ -551,15 +567,18 @@ impl ISA for System {
     }
     /// Load memory address in 16-bit register to register A
     fn ld_a_ar16(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg16b();
         self.cpu
             .reg_set_8(&Reg8b::A, self.mem_read_8(self.cpu.reg_get_16(reg)));
     }
     /// Load memory address in 16-bit immediate value to register A
     fn ld_a_an16(&mut self, args: Vec<Operand>) {
+        let addr = args[0].to_n16();
         self.cpu.reg_set_8(&Reg8b::A, self.mem_read_8(addr));
     }
     /// Load memory address in 16-bit immediate value to register A (High RAM)
     fn ldh_a_an16(&mut self, args: Vec<Operand>) {
+        let addr = args[0].to_n16();
         if 0xFF00 < addr && addr < 0xFFFF {
             self.cpu.reg_set_8(&Reg8b::A, self.mem_read_8(addr));
         }
@@ -595,10 +614,12 @@ impl ISA for System {
     }
     /// Load 16-bit immediate value to SP
     fn ld_sp_n16(&mut self, args: Vec<Operand>) {
+        let val = args[0].to_n16();
         self.cpu.reg_set_16(&Reg16b::SP, val);
     }
     /// Load register SP to memory address in 16-bit immediate value
     fn ld_an16_sp(&mut self, args: Vec<Operand>) {
+        let addr = args[0].to_n16();
         self.mem_write_16(addr, self.cpu.reg_get_16(&Reg16b::SP));
     }
     /// Load register SP with added signed 8-bit immediate value to HL
@@ -631,7 +652,7 @@ impl ISA for System {
     /// No Operation
     fn nop(&mut self, args: Vec<Operand>) {}
     /// Helper function for OR A - Logical OR with A
-    fn _or_a(&mut self, args: Vec<Operand>) {
+    fn _or_a(&mut self, val: u8) {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let result = a | val;
         self.cpu.reg_set_8(&Reg8b::A, result);
@@ -640,6 +661,7 @@ impl ISA for System {
     }
     /// Logical OR with A from 8-bit register
     fn or_a_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         self._or_a(self.cpu.reg_get_8(reg));
     }
     /// Logical OR with A from memory address in HL
@@ -648,6 +670,7 @@ impl ISA for System {
     }
     /// Logical OR with A from 8-bit immediate value
     fn or_a_n8(&mut self, args: Vec<Operand>) {
+        let val = args[0].to_n8();
         self._or_a(val);
     }
     /// Pop 16-bit value from stack to register AF
@@ -657,6 +680,7 @@ impl ISA for System {
     }
     /// Pop 16-bit value from stack to 16-bit register
     fn pop_r16(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_r16();
         let val = self.mem_stack_pop_16();
         self.cpu.reg_set_16(reg, val);
     }
@@ -667,35 +691,40 @@ impl ISA for System {
     }
     /// Push 16-bit value from 16-bit register to stack
     fn push_r16(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg16b();
         let val = self.cpu.reg_get_16(reg);
         self.mem_stack_push_16(val);
     }
     /// Reset bit u3 in 8-bit register
     fn res_u3_r8(&mut self, args: Vec<Operand>) {
+        let bit = args[0].to_n8();
+        let reg = args[1].to_reg8b();
         let val = self.cpu.reg_get_8(reg) & !(1 << bit);
         self.cpu.reg_set_8(reg, val);
     }
     /// Reset bit u3 in memory address in HL
     fn res_u3_ahl(&mut self, args: Vec<Operand>) {
+        let bit = args[0].to_n8();
         let val = self.mem_read_8(self.cpu.reg_get_16(&Reg16b::HL)) & !(1 << bit);
         self.mem_write_8(self.cpu.reg_get_16(&Reg16b::HL), val);
     }
     /// Return from subroutine
     /// Something akin to POP PC
     fn ret(&mut self, args: Vec<Operand>) {
-        self.pop_r16(&Reg16b::PC);
+        let val = self.mem_stack_pop_16();
+        self.cpu.reg_set_16(&Reg16b::PC, val);
     }
     /// Conditional Return
     fn ret_cc(&mut self, args: Vec<Operand>) {
         if self._condition(flag) {
-            self.ret();
+            self.ret(vec![]);
         }
     }
     /// Return from interrupt
     /// Enable interrupts and return from interrupt
     fn reti(&mut self, args: Vec<Operand>) {
         self._ime = 1;
-        self.ret();
+        self.ret(vec![]);
     }
     /// Helper function for RL - Rotate left through Carry Flag
     fn _rl(&mut self, args: Vec<Operand>) -> u8 {
