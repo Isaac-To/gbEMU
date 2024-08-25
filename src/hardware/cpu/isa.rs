@@ -3,7 +3,7 @@
 use crate::hardware::{
     cpu::{
         opcodes::{Operand, OperandTypeConversions},
-        reg::{Flag, Reg16b, Reg8b, RegisterAccess},
+        reg::{Reg16b, Reg8b, RegisterAccess},
     },
     mem::MemoryAccess,
     System,
@@ -19,7 +19,7 @@ pub trait ISA {
     fn _add_hl(&mut self, val: u16);
     fn _and_a(&mut self, val: u8);
     fn _bit_u3(&mut self, bit: u8, val: u8);
-    fn _condition(&self, flag: Flag) -> bool;
+    fn _condition(&self, cond: &'static str) -> bool;
     fn _cp_a(&mut self, val: u8);
     fn _or_a(&mut self, val: u8);
     fn _rl(&mut self, val: u8) -> u8;
@@ -147,9 +147,14 @@ impl ISA for System {
     /// A helper function to get the value of a flag
     ///
     /// Intended for use in conditional instructions
-    fn _condition(&self, flag: Flag) -> bool {
-        // TBD
-        panic!("Not implemented");
+    fn _condition(&self, cond: &'static str) -> bool {
+        match cond {
+            "NZ" => self.cpu.reg_get_flags().0 == 0,
+            "Z" => self.cpu.reg_get_flags().0 == 1,
+            "NC" => self.cpu.reg_get_flags().3 == 0,
+            "C" => self.cpu.reg_get_flags().3 == 1,
+            _ => panic!("Invalid condition"),
+        }
     }
     /// Helper function for ADC A - Add with Carry to A
     fn _adc_a(&mut self, val: u8) {
@@ -303,9 +308,9 @@ impl ISA for System {
     }
     /// Conditional CALL
     fn call_cc_n16(&mut self, args: Vec<Operand>) {
-        let addr = args[0].to_u16();
-        if self._condition(flag) {
-            let addr = args[0].to_u16();
+        let cond = args[0].to_condition();
+        if self._condition(cond) {
+            let addr = args[1].to_u16();
             let pc = self.cpu.reg_get_16(&Reg16b::PC);
             self.mem_stack_push_16(pc);
             self.cpu.reg_set_16(&Reg16b::PC, addr);
@@ -485,8 +490,9 @@ impl ISA for System {
     }
     /// Conditional Jump
     fn jp_cc_n16(&mut self, args: Vec<Operand>) {
-        if self._condition(flag) {
-            let addr = args[0].to_u16();
+        let cond = args[0].to_condition();
+        if self._condition(cond) {
+            let addr = args[1].to_u16();
             self.cpu.reg_set_16(&Reg16b::PC, addr);
         }
     }
@@ -503,8 +509,9 @@ impl ISA for System {
     }
     /// Conditional Jump Relative
     fn jr_cc_n16(&mut self, args: Vec<Operand>) {
-        if self._condition(flag) {
-            let e8 = args[0].to_i8() as i16;
+        let cond = args[0].to_condition();
+        if self._condition(cond) {
+            let e8 = args[1].to_i8() as i16;
             let pc = self.cpu.reg_get_16(&Reg16b::PC);
             self.cpu.reg_set_16(&Reg16b::PC, pc.wrapping_add_signed(e8));
         }
@@ -680,7 +687,7 @@ impl ISA for System {
     }
     /// Pop 16-bit value from stack to 16-bit register
     fn pop_r16(&mut self, args: Vec<Operand>) {
-        let reg = args[0].to_r16();
+        let reg = args[0].to_reg16b();
         let val = self.mem_stack_pop_16();
         self.cpu.reg_set_16(reg, val);
     }
@@ -716,7 +723,8 @@ impl ISA for System {
     }
     /// Conditional Return
     fn ret_cc(&mut self, args: Vec<Operand>) {
-        if self._condition(flag) {
+        let cond = args[0].to_condition();
+        if self._condition(cond) {
             self.ret(vec![]);
         }
     }
@@ -836,7 +844,8 @@ impl ISA for System {
     /// Something like "CALL" for vecs but faster
     fn rst(&mut self, args: Vec<Operand>) {
         let vec = args[0].to_u16();
-        self.push_r16(&Reg16b::PC);
+        let val = self.cpu.reg_get_16(&Reg16b::PC);
+        self.mem_stack_push_16(val);
         self.cpu.reg_set_16(&Reg16b::PC, vec);
     }
     /// Helper function for SBC A - Subtract with Carry from A

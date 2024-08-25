@@ -140,6 +140,7 @@ pub trait OperandTypeConversions {
     fn to_u16(&self) -> u16;
     fn to_i8(&self) -> i8;
     fn to_i16(&self) -> i16;
+    fn to_condition(&self) -> &'static str;
 }
 
 impl OperandTypeConversions for Operand {
@@ -205,6 +206,17 @@ impl OperandTypeConversions for Operand {
     fn to_i16(&self) -> i16 {
         match self.name {
             "e16" => self.value as i16,
+            _ => panic!("Invalid operand"),
+        }
+    }
+
+    /// Converts an operand to a condition
+    fn to_condition(&self) -> &'static str {
+        match self.name {
+            "NZ" => "NZ",
+            "Z" => "Z",
+            "NC" => "NC",
+            "C" => "C",
             _ => panic!("Invalid operand"),
         }
     }
