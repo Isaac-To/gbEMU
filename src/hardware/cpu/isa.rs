@@ -727,7 +727,7 @@ impl ISA for System {
         self.ret(vec![]);
     }
     /// Helper function for RL - Rotate left through Carry Flag
-    fn _rl(&mut self, args: Vec<Operand>) -> u8 {
+    fn _rl(&mut self, val: u8) -> u8 {
         let flags = self.cpu.reg_get_flags();
         let carry = (val & 0x80) >> 7;
         let result = (val << 1) | flags.3;
@@ -737,6 +737,7 @@ impl ISA for System {
     }
     /// Rotate left 8-bit register through Carry Flag
     fn rl_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         let val = self.cpu.reg_get_8(reg);
         let result = self._rl(val);
         self.cpu.reg_set_8(reg, result);
@@ -754,7 +755,7 @@ impl ISA for System {
         self.cpu.reg_set_8(&Reg8b::A, result);
     }
     /// Helper function for RLC - Rotate left circular
-    fn _rlc(&mut self, args: Vec<Operand>) -> u8 {
+    fn _rlc(&mut self, val: u8) -> u8 {
         let carry = (val & 0x80) >> 7;
         let result = (val << 1) | carry;
         self.cpu
@@ -763,6 +764,7 @@ impl ISA for System {
     }
     /// Rotate 8-bit register left circular
     fn rlc_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         let val = self._rlc(self.cpu.reg_get_8(reg));
         self.cpu.reg_set_8(reg, val);
     }
@@ -778,7 +780,7 @@ impl ISA for System {
         self.cpu.reg_set_8(&Reg8b::A, val);
     }
     /// Helper function for RR - Rotate Right through Carry Flag
-    fn _rr(&mut self, args: Vec<Operand>) -> u8 {
+    fn _rr(&mut self, val: u8) -> u8 {
         let flags = self.cpu.reg_get_flags();
         let carry = val & 1;
         let result = (val >> 1) | (flags.3 << 7);
@@ -788,6 +790,7 @@ impl ISA for System {
     }
     /// Rotate 8-bit register right through Carry Flag
     fn rr_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         let val = self.cpu.reg_get_8(reg);
         let result = self._rr(val);
         self.cpu.reg_set_8(reg, result);
@@ -805,7 +808,7 @@ impl ISA for System {
         self.cpu.reg_set_8(&Reg8b::A, result);
     }
     /// Helper function for RRC - Rotate Right Circular
-    fn _rrc(&mut self, args: Vec<Operand>) -> u8 {
+    fn _rrc(&mut self, val: u8) -> u8 {
         let carry = val & 1;
         let result = (val >> 1) | (carry << 7);
         self.cpu
@@ -814,6 +817,7 @@ impl ISA for System {
     }
     /// Rotate 8-bit register right circular
     fn rrc_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         let val = self._rrc(self.cpu.reg_get_8(reg));
         self.cpu.reg_set_8(reg, val);
     }
@@ -831,11 +835,12 @@ impl ISA for System {
     /// RST - Restart
     /// Something like "CALL" for vecs but faster
     fn rst(&mut self, args: Vec<Operand>) {
+        let vec = args[0].to_u16();
         self.push_r16(&Reg16b::PC);
         self.cpu.reg_set_16(&Reg16b::PC, vec);
     }
     /// Helper function for SBC A - Subtract with Carry from A
-    fn _sbc_a(&mut self, args: Vec<Operand>) {
+    fn _sbc_a(&mut self, val: u8) {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let carry = self.cpu.reg_get_flags().3;
         let result = a.wrapping_sub(val).wrapping_sub(carry);
@@ -850,6 +855,7 @@ impl ISA for System {
     }
     /// Subtract with Carry from A with 8-bit register
     fn sbc_a_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         self._sbc_a(self.cpu.reg_get_8(reg));
     }
     /// Subtract with Carry from A with memory address in HL
@@ -858,6 +864,7 @@ impl ISA for System {
     }
     /// Subtract with Carry from A with 8-bit immediate value
     fn sbc_a_n8(&mut self, args: Vec<Operand>) {
+        let val = args[0].to_n8();
         self._sbc_a(val);
     }
     /// Set Carry Flag
@@ -866,22 +873,25 @@ impl ISA for System {
         self.cpu.reg_set_flags((flags.0, 0, 0, 1));
     }
     /// Helper function for SET u3 - Set bit u3
-    fn _set_u3(&mut self, args: Vec<Operand>) -> u8 {
+    fn _set_u3(&mut self, val: u8, bit: u8) -> u8 {
         val | (1 << bit)
     }
     /// Set bit u3 in 8-bit register
     fn set_u3_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
+        let bit = args[1].to_n8();
         let val = self._set_u3(self.cpu.reg_get_8(reg), bit);
         self.cpu.reg_set_8(reg, val);
     }
     /// Set bit u3 in memory address in HL
     fn set_u3_ahl(&mut self, args: Vec<Operand>) {
+        let bit = args[0].to_n8();
         let loc = self.cpu.reg_get_16(&Reg16b::HL);
         let val = self._set_u3(self.mem_read_8(loc), bit);
         self.mem_write_8(loc, val);
     }
     /// Helper function for SLA - Shift Left Arithmetic
-    fn _sla(&mut self, args: Vec<Operand>) -> u8 {
+    fn _sla(&mut self, val: u8) -> u8 {
         let carry = (val & 0x80) >> 7;
         let result = val << 1;
         self.cpu
@@ -890,6 +900,7 @@ impl ISA for System {
     }
     /// Shift Left Arithmetic 8-bit register
     fn sla_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         let val = self._sla(self.cpu.reg_get_8(reg));
         self.cpu.reg_set_8(reg, val);
     }
@@ -900,7 +911,7 @@ impl ISA for System {
         self.mem_write_8(loc, val);
     }
     /// Helper function for SRA - Shift Right Arithmetic
-    fn _sra(&mut self, args: Vec<Operand>) -> u8 {
+    fn _sra(&mut self, val: u8) -> u8 {
         let carry = val & 1;
         let result = (val >> 1) | (val & 0x80);
         self.cpu
@@ -909,6 +920,7 @@ impl ISA for System {
     }
     /// Shift Right Arithmetic 8-bit register
     fn sra_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         let val = self._sra(self.cpu.reg_get_8(reg));
         self.cpu.reg_set_8(reg, val);
     }
@@ -919,7 +931,7 @@ impl ISA for System {
         self.mem_write_8(loc, val);
     }
     /// Helper function for SRL - Shift Right Logical
-    fn _srl(&mut self, args: Vec<Operand>) -> u8 {
+    fn _srl(&mut self, val: u8) -> u8 {
         let carry = val & 1;
         let result = val >> 1;
         self.cpu
@@ -928,6 +940,7 @@ impl ISA for System {
     }
     /// Shift Right Logical 8-bit register
     fn srl_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         let val = self._srl(self.cpu.reg_get_8(reg));
         self.cpu.reg_set_8(reg, val);
     }
@@ -943,7 +956,7 @@ impl ISA for System {
         self._low_power = 1;
     }
     /// Helper function for SUB A - Subtract from A
-    fn _sub_a(&mut self, args: Vec<Operand>) {
+    fn _sub_a(&mut self, val: u8) {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let result = a.wrapping_sub(val);
         self.cpu.reg_set_flags((
@@ -956,6 +969,7 @@ impl ISA for System {
     }
     /// Subtract from A with 8-bit register
     fn sub_a_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         self._sub_a(self.cpu.reg_get_8(reg));
     }
     /// Subtract from A with memory address in HL
@@ -964,10 +978,11 @@ impl ISA for System {
     }
     /// Subtract from A with 8-bit immediate value
     fn sub_a_n8(&mut self, args: Vec<Operand>) {
+        let val = args[0].to_n8();
         self._sub_a(val);
     }
     /// Helper function for SWAP - Swap nibbles
-    fn _swap(&mut self, args: Vec<Operand>) -> u8 {
+    fn _swap(&mut self, val: u8) -> u8 {
         let val = (val << 4) | (val >> 4);
         let flags = (if val == 0 { 1 } else { 0 }, 0, 0, 0);
         self.cpu.reg_set_flags(flags);
@@ -975,6 +990,7 @@ impl ISA for System {
     }
     /// Swap nibbles in 8-bit register
     fn swap_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         let val = self._swap(self.cpu.reg_get_8(reg));
         self.cpu.reg_set_8(reg, val);
     }
@@ -985,7 +1001,7 @@ impl ISA for System {
         self.mem_write_8(loc, val);
     }
     // Helper function for XOR A - Logical XOR with A
-    fn _xor_a(&mut self, args: Vec<Operand>) {
+    fn _xor_a(&mut self, val: u8) {
         let a = self.cpu.reg_get_8(&Reg8b::A);
         let result = a ^ val;
         let flags = (if result == 0 { 1 } else { 0 }, 0, 0, 0);
@@ -994,6 +1010,7 @@ impl ISA for System {
     }
     /// Logical XOR with A from 8-bit register
     fn xor_a_r8(&mut self, args: Vec<Operand>) {
+        let reg = args[0].to_reg8b();
         self._xor_a(self.cpu.reg_get_8(reg));
     }
     /// Logical XOR with A from memory address in HL
@@ -1002,6 +1019,7 @@ impl ISA for System {
     }
     /// Logical XOR with A from 8-bit immediate value
     fn xor_a_n8(&mut self, args: Vec<Operand>) {
+        let val = args[0].to_n8();
         self._xor_a(val);
     }
 }
