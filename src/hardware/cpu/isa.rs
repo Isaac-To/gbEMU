@@ -1028,7 +1028,7 @@ impl ISA for System {
     }
     /// Logical XOR with A from 8-bit immediate value
     fn xor_a_n8(&mut self, args: Vec<Operand>) {
-        let val = args[0].t();
+        let val = args[0].to_u8();
         self._xor_a(val);
     }
 }
