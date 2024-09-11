@@ -1,6 +1,5 @@
-pub mod isa;
-pub mod reg;
 pub mod opcodes;
+pub mod reg;
 
 use super::System;
 
@@ -14,9 +13,7 @@ impl CPU {
     /// Create a new CPU
     /// All registers are initialized to 0
     pub fn new() -> CPU {
-        CPU {
-            registers: [0; 12],
-        }
+        CPU { registers: [0; 12] }
     }
 }
 
