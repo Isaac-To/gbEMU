@@ -1,5 +1,3 @@
-use super::CPU;
-
 /// Registers are 8-bit and 16-bit values that are used to store data and perform operations.
 
 /// Reg8b is an enum that represents the 8-bit registers of the CPU.
@@ -81,36 +79,50 @@ pub enum Flag {
 
 /// RegisterAccess trait for CPU to allow read write access to registers
 pub trait RegisterAccess {
-    fn reg_get_8(&self, reg: &Reg8b) -> u8;
-    fn reg_set_8(&mut self, reg: &Reg8b, value: u8);
-    fn reg_get_16(&self, reg: &Reg16b) -> u16;
-    fn reg_set_16(&mut self, reg: &Reg16b, value: u16);
-    fn reg_get_flags(&self) -> (u8, u8, u8, u8);
-    fn reg_set_flags(&mut self, flags: (u8, u8, u8, u8));
+    fn get_8(&self, reg: &Reg8b) -> u8;
+    fn set_8(&mut self, reg: &Reg8b, value: u8);
+    fn get_16(&self, reg: &Reg16b) -> u16;
+    fn set_16(&mut self, reg: &Reg16b, value: u16);
+    fn get_flags(&self) -> (u8, u8, u8, u8);
+    fn set_flags(&mut self, flags: (u8, u8, u8, u8));
+}
+
+pub struct Registers {
+    registers: [u8; 12],
+}
+
+impl Registers {
+    /// Create a new Registers struct
+    /// All registers are initialized to 0
+    pub fn new() -> Registers {
+        let mut reg = Registers { registers: [0; 12] };
+        reg.set_16(&Reg16b::PC, 0x100);
+        reg
+    }
 }
 
 /// Implement RegisterAccess for CPU
-impl RegisterAccess for CPU {
+impl RegisterAccess for Registers {
     /// Read 8-bit value from register
-    fn reg_get_8(&self, reg: &Reg8b) -> u8 {
+    fn get_8(&self, reg: &Reg8b) -> u8 {
         self.registers[reg.value() as usize]
     }
     /// Write 8-bit value to register
-    fn reg_set_8(&mut self, reg: &Reg8b, value: u8) {
+    fn set_8(&mut self, reg: &Reg8b, value: u8) {
         self.registers[reg.value() as usize] = value;
     }
     /// Read 16-bit value from register
-    fn reg_get_16(&self, reg: &Reg16b) -> u16 {
-        (self.reg_get_8(&reg.value().0) as u16) << 8 | self.reg_get_8(&reg.value().1) as u16
+    fn get_16(&self, reg: &Reg16b) -> u16 {
+        (self.get_8(&reg.value().0) as u16) << 8 | self.get_8(&reg.value().1) as u16
     }
     /// Write 16-bit value to register
-    fn reg_set_16(&mut self, reg: &Reg16b, value: u16) {
-        self.reg_set_8(&reg.value().0, (value >> 8) as u8);
-        self.reg_set_8(&reg.value().1, value as u8);
+    fn set_16(&mut self, reg: &Reg16b, value: u16) {
+        self.set_8(&reg.value().0, (value >> 8) as u8);
+        self.set_8(&reg.value().1, value as u8);
     }
     /// Read flags from F register
-    fn reg_get_flags(&self) -> (u8, u8, u8, u8) {
-        let f = self.reg_get_8(&Reg8b::F);
+    fn get_flags(&self) -> (u8, u8, u8, u8) {
+        let f = self.get_8(&Reg8b::F);
         (
             (f >> Flag::Zero as u8) & 1,
             (f >> Flag::Subtract as u8) & 1,
@@ -119,12 +131,12 @@ impl RegisterAccess for CPU {
         )
     }
     /// Write flags to F register
-    fn reg_set_flags(&mut self, (zero, subtract, half_carry, carry): (u8, u8, u8, u8)) {
+    fn set_flags(&mut self, (zero, subtract, half_carry, carry): (u8, u8, u8, u8)) {
         let mut f = 0;
         f |= zero << Flag::Zero as u8;
         f |= subtract << Flag::Subtract as u8;
         f |= half_carry << Flag::HalfCarry as u8;
         f |= carry << Flag::Carry as u8;
-        self.reg_set_8(&Reg8b::F, f);
+        self.set_8(&Reg8b::F, f);
     }
 }

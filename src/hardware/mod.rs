@@ -1,8 +1,8 @@
 pub mod cpu;
 pub mod mem;
-pub mod rom;
 
-use cpu::reg::{Reg16b, RegisterAccess};
+use cpu::Execution;
+use mem::{Memory, MemoryAccess};
 
 /// System struct
 pub struct System {
@@ -10,30 +10,32 @@ pub struct System {
     cpu: cpu::CPU,
 
     /// Memory
-    memory: [u8; 8192],
-
-    /// Video memory
-    vram: [u8; 8192],
-
-    /// Internal Flags
-    _ime: u8,
-    _interrupt_iminent: u8,
-    _low_power: u8
+    memory: *mut mem::Memory,
 }
 
 impl System {
     /// Create a new System
-    /// All registers are initialized to 0 except SP which is set to 8191 to match the end of memory
-    pub fn new() -> System {
-        let mut sys = System {
-            cpu: cpu::CPU::new(),
-            memory: [0; 8192],
-            vram: [0; 8192],
-            _ime: 0,
-            _interrupt_iminent: 0,
-            _low_power: 0
-        };
-        sys.cpu.reg_set_16(&Reg16b::SP, 8191);
-        return sys;
+    pub fn new(mem_ptr: &mut Memory) -> System {
+        System {
+            cpu: cpu::CPU::new(mem_ptr),
+            memory: mem_ptr,
+        }
+    }
+
+    /// Run the system
+    pub fn run(&mut self) {
+        // let clock_interval = 477; // native nanoseconds
+        let clock_interval = 1000000000; // debug nanoseconds
+        loop {
+            let now = std::time::Instant::now();
+            self.cpu.exec();
+            let elapsed = now.elapsed();
+            if elapsed.as_nanos() < clock_interval {
+                std::thread::sleep(std::time::Duration::from_nanos(
+                    (clock_interval - elapsed.as_nanos()) as u64,
+                ));
+                // println!("Sleeping for: {} ns", clock_interval - elapsed.as_nanos());
+            }
+        }
     }
 }

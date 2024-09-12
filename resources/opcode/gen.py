@@ -6,10 +6,7 @@ import json
 def write_to_rust_file(f, key, type):
     operands = type[key].get("operands")
     while len(operands) < 3:
-        operands.append({"name": "NULL", "bytes": 0, "immediate": False, "value": 0})
-    cycles = type[key]["cycles"]
-    while len(cycles) < 2:
-        cycles.append(0)
+        operands.append({"name": "NULL", "bytes": 0, "immediate": False})
     op = f'''
         operands: [{
     ",".join([f"""
@@ -17,10 +14,13 @@ def write_to_rust_file(f, key, type):
                 name: "{operand["name"]}",
                 bytes: {int(0 if operand.get("bytes") is None else operand.get("bytes"))},
                 immediate: {str(operand["immediate"]).lower()},
-                value: 0
+                value: 0,
             }}""" for operand in operands
     ])
     }],'''
+    cycle = type[key].get("cycles")
+    while len(cycle) < 2:
+        cycle.append(cycle[0])
     f.write(f'''({key}, Opcode {{
         mnemonic: "{type[key]["mnemonic"]}",
         cycles: {type[key]["cycles"]},{op}
@@ -99,15 +99,15 @@ impl std::fmt::Display for Opcode {
             }
             if operand.bytes != 0 {
                 if operand.immediate == true {
-                    output.push_str(&format!("{} ", format!("0x{:x}", operand.value)));
+                    output.push_str(&format!("{} ", format!("0x{:x}", operand.value).to_uppercase()));
                 } else {
-                    output.push_str(&format!("{} ", format!("(0x{:x})", operand.value)));
+                    output.push_str(&format!("{} ", format!("(0x{:x})", operand.value).to_uppercase()));
                 }
             } else {
                 if operand.immediate == true {
-                    output.push_str(&format!("{} ", format!("{}", operand.name)));
+                    output.push_str(&format!("{} ", format!("{}", operand.name).to_uppercase()));
                 } else {
-                    output.push_str(&format!("{} ", format!("({})", operand.name)));
+                    output.push_str(&format!("{} ", format!("({})", operand.name).to_uppercase()));
                 }
             }
         }
