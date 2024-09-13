@@ -1,8 +1,9 @@
 pub mod cpu;
 pub mod mem;
+pub mod rw;
 
 use cpu::Execution;
-use mem::{Memory, MemoryAccess};
+use mem::Memory;
 
 /// System struct
 pub struct System {
@@ -28,7 +29,7 @@ impl System {
         let clock_interval = 1000000000; // debug nanoseconds
         loop {
             let now = std::time::Instant::now();
-            self.cpu.exec();
+            self.cpu.step();
             let elapsed = now.elapsed();
             if elapsed.as_nanos() < clock_interval {
                 std::thread::sleep(std::time::Duration::from_nanos(

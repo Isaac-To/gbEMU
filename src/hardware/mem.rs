@@ -1,4 +1,7 @@
-use super::cpu::opcodes::{cb_prefixed_opcode_get, unprefixed_opcode_get, Opcode};
+use super::{
+    cpu::opcodes::{cb_prefixed_opcode_get, unprefixed_opcode_get, Opcode},
+    rw::RWAccess,
+};
 use std::fs;
 
 pub struct Memory {
@@ -29,16 +32,8 @@ impl Memory {
     }
 }
 
-/// MemoryAccess trait for System
-pub trait MemoryAccess {
-    fn read_8(&self, addr: u16) -> u8;
-    fn read_16(&self, addr: u16) -> u16;
-    fn write_8(&mut self, addr: u16, value: u8);
-    fn write_16(&mut self, addr: u16, value: u16);
-}
-
 /// Implement MemoryAccess for System
-impl MemoryAccess for Memory {
+impl RWAccess for Memory {
     /// Read 8-bit value from memory
     fn read_8(&self, addr: u16) -> u8 {
         self.data[addr as usize]
